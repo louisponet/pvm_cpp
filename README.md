@@ -6,6 +6,5 @@ The main observation to be explored is that it is easier to pass code around rat
 
 # Build
 `bazel` is used as the build framework.
-The code can be built by running `bazel build //src:main`.
-
-The executable can then be found in `bazel-bin/pvm_cpp/main`.
+The code can be built by running first `bazel build //plugins/0:plugin_0` to build an example plugin followed by `bazel build //src:main` to build the main executable.
+The executable can then be found in `bazel-bin/pvm_cpp/main`. Change `src/main.cpp` according to your setup.
