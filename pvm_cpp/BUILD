@@ -1,7 +1,7 @@
 cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp"]),
-    # copts = ["-std=c++17", "-O0", "-march=native"],
+    copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main"]
 )

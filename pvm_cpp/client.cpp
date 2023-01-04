@@ -110,37 +110,6 @@ void Client::kill() {
 	);
 }
 
-int Client::load_data(const std::string& name, const std::string& path) {
-	// TODO make this ispath on the server
-	if (!utils::ispath(path))
-		throw std::invalid_argument("Not a path");
-	return request("POST", "/data/load/" + name + "/" + path, "Error loading data",
-		[](auto &res){
-			return std::stoi(res -> body);
-		}
-	);
-}
-
-std::vector<std::string> Client::list_data() {
-	return request("GET", "/data/list", "Error listing data", 
-		[](auto &res) {
-			std::cout << res->body << std::endl;
-			nlohmann::json data = nlohmann::json::parse(res -> body);
-
-			return data["names"].get<std::vector<std::string>>();
-		}
-	);
-}
-
-void Client::unload_data(const std::string& name) {
-	request("POST", "/data/unload/" + name, "Error unloading data", 
-		[](auto &res){
-		    if (res -> status != 200)
-				throw std::invalid_argument("No such data exists");
-		}
-	);
-}
-
 void Client::load_plugin(const std::string& name, const std::string& path) {
 	// TODO make this ispath on the server
 	if (!utils::ispath(path))
@@ -164,8 +133,22 @@ void Client::init_plugin(const std::string& plugin_name, const std::string& data
 	);
 }
 
+void Client::run_plugin(const std::string& plugin_name) {
+	// TODO make this ispath on the server
+	request("POST", fmt::format("/plugin/run/{}", plugin_name), "Error running plugin", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server Error running plugin");
+		}
+	);
+}
 
-
-
-
-
+void Client::finalize_plugin(const std::string& plugin_name) {
+	// TODO make this ispath on the server
+	request("POST", fmt::format("/plugin/finalize/{}", plugin_name), "Error finalizing plugin", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server Error finalizing plugin");
+		}
+	);
+}

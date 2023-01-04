@@ -23,32 +23,6 @@ Server::Server(int i) : id(i), should_stop(false){
         return true;
     });
 
-    CROW_ROUTE(server, "/data/load/<string>/<path>").methods(crow::HTTPMethod::POST)
-    ([this](std::string name, std::string path){
-		Dataset d(path);
-		// TODO handle exception on missing path/out of memory
-		datasets[name] = d;
-		return crow::json::wvalue(d.ticks.size());
-    });
-    CROW_ROUTE(server, "/data/unload/<string>").methods(crow::HTTPMethod::POST)
-    ([this](std::string name){
-		if (datasets.find(name) == datasets.end())
-			return 500;
-		datasets.erase(name);
-		return 200;
-    });
-    CROW_ROUTE(server, "/data/list")
-    ([this](){
-	    std::vector<std::string> keys;
-	    keys.reserve(datasets.size());
-	    for (auto kv : datasets) {
-		    keys.push_back(kv.first);
-	    }
-	    json data;
-	    data["names"] = keys; 
-	    return data.dump();
-    });
-
     CROW_ROUTE(server, "/plugin/load/<string>/<path>").methods(crow::HTTPMethod::POST)
     ([this](std::string name, std::string path){
 	    plugins[name] = Plugin(path);
@@ -73,12 +47,34 @@ Server::Server(int i) : id(i), should_stop(false){
 		return 200;
     });
 
-    CROW_ROUTE(server, "/plugin/init/<string>/<string>").methods(crow::HTTPMethod::POST)
-    ([this](std::string plugin_name, std::string dataset_name){
-		if (datasets.find(dataset_name) == datasets.end() || plugins.find(plugin_name) == plugins.end())
+    CROW_ROUTE(server, "/plugin/init/<string>/<path>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name, std::string dataset_path){
+		if (plugins.find(plugin_name) == plugins.end())
 			return 500;
 
-		if (plugins[plugin_name].init(datasets[dataset_name].size())){
+		if (plugins[plugin_name].init(dataset_path)){
+			return 500;
+		} else {
+			return 200;
+		}
+    });
+    CROW_ROUTE(server, "/plugin/run/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name){
+		if (plugins.find(plugin_name) == plugins.end())
+			return 500;
+
+		if (plugins[plugin_name].run()){
+			return 500;
+		} else {
+			return 200;
+		}
+    });
+    CROW_ROUTE(server, "/plugin/finalize/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name){
+		if (plugins.find(plugin_name) == plugins.end())
+			return 500;
+
+		if (plugins[plugin_name].finalize()){
 			return 500;
 		} else {
 			return 200;

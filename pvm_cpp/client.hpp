@@ -25,12 +25,8 @@ class Client {
 		bool isalive();
 		void kill();
 
-		int load_data(const std::string& name, const std::string& path);
-		void unload_data(const std::string& name);
-		std::vector<std::string> list_data();
-
 		void load_plugin(const std::string& name, const std::string& path);
-		void init_plugin(const std::string& plugin_name, const std::string& dataset_name);
+		void init_plugin(const std::string& plugin_name, const std::string& dataset_path);
 		void run_plugin(const std::string& plugin_name);
 		void finalize_plugin(const std::string& plugin_name);
 		void unload_plugin(const std::string& name);

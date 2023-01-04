@@ -18,6 +18,6 @@ Dataset::Dataset(std::string filepath) {
 		              tick["low"].get<float>()));
 	}
 }
-int Dataset::size() {
+int Dataset::size() const {
 	return ticks.size();
 }

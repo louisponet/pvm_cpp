@@ -6,7 +6,7 @@
 #include "pvm_cpp/tick.hpp"
 
 
-class Dataset {
+extern "C" class Dataset {
 	public:
 		std::string ticker;
 		std::vector<Tick> ticks;
@@ -14,7 +14,7 @@ class Dataset {
 		Dataset(std::string filepath);
 		Dataset();
 
-		int size();
+		int size() const;
 };
 
 #endif // dataset_hpp_INCLUDED
