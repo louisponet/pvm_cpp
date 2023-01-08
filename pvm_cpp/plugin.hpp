@@ -12,15 +12,15 @@ class Plugin {
 
 		bool loaded;
 		void load();
-		int init(std::string dataset_path);
-		int run();
-		int finalize();
+		int init(const Dataset&);
+		int run(const Dataset& dataset);
+		int finalize(const Dataset&);
 
 	private:
 		std::string path;
-		int (*init_)(void*);
-		int (*run_)();
-		int (*finalize_)();
+		int (*init_)(const Dataset&);
+		int (*run_)(const Dataset&);
+		int (*finalize_)(const Dataset&);
 		void *handle;
 
 };

@@ -36,7 +36,7 @@ void Plugin::load(){
 		return;
 	}
 
-	init_ = reinterpret_cast<int (*)(void*)>(init_handle);
+	init_ = reinterpret_cast<int (*)(const Dataset&)>(init_handle);
 
 	void *run_handle = dlsym(handle, "run");
 	if (!run_handle){
@@ -49,7 +49,7 @@ void Plugin::load(){
 		return;
 	}
 
-	run_ = reinterpret_cast<int (*)()>(run_handle);
+	run_ = reinterpret_cast<int (*)(const Dataset&)>(run_handle);
 
 	void *finalize_handle = dlsym(handle, "finalize");
 	if (!finalize_handle){
@@ -62,21 +62,18 @@ void Plugin::load(){
 		return;
 	}
 
-	finalize_ = reinterpret_cast<int (*)()>(finalize_handle);
+	finalize_ = reinterpret_cast<int (*)(const Dataset&)>(finalize_handle);
 	loaded = true;
 	//TODO handle nopath or other error exceptions
 }
-int Plugin::init(std::string path) {
-	return init_(&path);
-	//todo put the handles in the plugin
+int Plugin::init(const Dataset& dataset) {
+	return init_(dataset);
 }
 
-int Plugin::run() {
-	return run_();
-	//todo put the handles in the plugin
+int Plugin::run(const Dataset& dataset) {
+	return run_(dataset);
 }
 
-int Plugin::finalize() {
-	return finalize_();
-	//todo put the handles in the plugin
+int Plugin::finalize(const Dataset& dataset) {
+	return finalize_(dataset);
 }

@@ -22,6 +22,21 @@ Server::Server(int i) : id(i), should_stop(false){
         should_stop = true; //
         return true;
     });
+    CROW_ROUTE(server, "/data/load/<string>/<path>").methods(crow::HTTPMethod::POST)
+    ([this](std::string name, std::string path){
+	    datasets[name] = Dataset(path);
+	    return 200;
+    });
+    CROW_ROUTE(server, "/data/list")
+    ([this](){
+	    std::vector<std::string> out;
+		for (auto const& kv: datasets){
+			out.push_back(kv.first);
+		}
+		nlohmann::json to_ret;
+		to_ret["names"] = out;
+	    return to_ret.dump();
+    });
 
     CROW_ROUTE(server, "/plugin/load/<string>/<path>").methods(crow::HTTPMethod::POST)
     ([this](std::string name, std::string path){
@@ -47,34 +62,32 @@ Server::Server(int i) : id(i), should_stop(false){
 		return 200;
     });
 
-    CROW_ROUTE(server, "/plugin/init/<string>/<path>").methods(crow::HTTPMethod::POST)
-    ([this](std::string plugin_name, std::string dataset_path){
-		if (plugins.find(plugin_name) == plugins.end())
+    CROW_ROUTE(server, "/plugin/init/<string>/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name, std::string dataset_name){
+		if (plugins.find(plugin_name) == plugins.end() ||datasets.find(dataset_name) == datasets.end() )
 			return 500;
-
-		if (plugins[plugin_name].init(dataset_path)){
-			return 500;
-		} else {
-			return 200;
-		}
-    });
-    CROW_ROUTE(server, "/plugin/run/<string>").methods(crow::HTTPMethod::POST)
-    ([this](std::string plugin_name){
-		if (plugins.find(plugin_name) == plugins.end())
-			return 500;
-
-		if (plugins[plugin_name].run()){
+		if (plugins[plugin_name].init(datasets[dataset_name])){
 			return 500;
 		} else {
 			return 200;
 		}
     });
-    CROW_ROUTE(server, "/plugin/finalize/<string>").methods(crow::HTTPMethod::POST)
-    ([this](std::string plugin_name){
-		if (plugins.find(plugin_name) == plugins.end())
+    CROW_ROUTE(server, "/plugin/run/<string>/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name, std::string dataset_name){
+		if (plugins.find(plugin_name) == plugins.end() ||datasets.find(dataset_name) == datasets.end() )
+			return 500;
+		if (plugins[plugin_name].run(datasets[dataset_name])){
+			return 500;
+		} else {
+			return 200;
+		}
+    });
+    CROW_ROUTE(server, "/plugin/finalize/<string>/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string plugin_name, std::string dataset_name){
+		if (plugins.find(plugin_name) == plugins.end() ||datasets.find(dataset_name) == datasets.end() )
 			return 500;
 
-		if (plugins[plugin_name].finalize()){
+		if (plugins[plugin_name].finalize(datasets[dataset_name])){
 			return 500;
 		} else {
 			return 200;

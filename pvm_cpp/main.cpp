@@ -33,11 +33,12 @@ int main(int argc, char** argv)
 	} else {
 		Client c(1);
 		c.connect();
-		// c.load_data("test_data", "/home/ponet/.julia/environments/TradingDEV/data.json");
+		c.load_data("test_data", "/home/ponet/.julia/environments/TradingDEV/data.json");
+		std::cout << c.list_data()[0] << std::endl;
 		c.load_plugin("test_plugin", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
-		c.init_plugin("test_plugin", "/home/ponet/.julia/environments/TradingDEV/data.json");
-		c.run_plugin("test_plugin");
-		c.finalize_plugin("test_plugin");
+		c.init_plugin("test_plugin", "test_data");
+		c.run_plugin("test_plugin", "test_data");
+		c.finalize_plugin("test_plugin", "test_data");
 		c.kill();
 		return 0;
 	}

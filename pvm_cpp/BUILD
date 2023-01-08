@@ -1,24 +1,32 @@
 cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp"]),
+	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
     copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
     visibility = ["//visibility:public"],
-	deps = ["@crow//:main"]
-)
-
-cc_binary(
-        name = "main",
-        srcs = ["main.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
-        deps = [
+	deps = ["@crow//:main",
             "@com_github_google_benchmark//:benchmark",
             "@nlohmann_json//:json",
-			"@crow//:main",
             "@gtest//:gtest",
 			"@entt//:entt",
 			"@boost//:program_options",
 			"@httplib//:main",
-			"@fmt//:main",
-		    ":mainlib"],
+			"@fmt//:main"]
+)
+# cc_binary(
+#     name = "mainlib",
+#     # hdrs= glob(["*.hpp"]),
+# 	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
+#     copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
+#     linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
+#     visibility = ["//visibility:public"],
+# 	deps = [":mainlib_"],
+# )
+
+cc_binary(
+        name = "main",
+        srcs = ["main.cpp"],
+        deps = [":mainlib"],
         copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
         linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 		data = ["//:templates"],

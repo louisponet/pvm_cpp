@@ -110,6 +110,44 @@ void Client::kill() {
 	);
 }
 
+void Client::load_data(const std::string& name, const std::string& path) {
+	// TODO make this ispath on the server
+	if (!utils::ispath(path))
+		throw std::invalid_argument("Not a path");
+
+	request("POST", fmt::format("/data/load/{}/{}", name, path), "Error loading data", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server error loading data");
+		}
+	);
+}
+
+void Client::unload_data(const std::string& name) {
+	// TODO make this ispath on the server
+	request("POST", fmt::format("/data/unload/{}", name), "Error unloading data", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server error unloading data");
+		}
+	);
+}
+std::vector<std::string> Client::list_data() {
+	// TODO make this ispath on the server
+	return request("GET", fmt::format("/data/list"), "Error listing data", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server error listing data");
+		    auto data = nlohmann::json::parse(res->body);
+		    std::vector<std::string> out;
+		    for (auto const& s: data["names"]){
+			    out.push_back(s);
+		    }
+		    return out;
+		}
+	);
+}
+
 void Client::load_plugin(const std::string& name, const std::string& path) {
 	// TODO make this ispath on the server
 	if (!utils::ispath(path))
@@ -133,9 +171,9 @@ void Client::init_plugin(const std::string& plugin_name, const std::string& data
 	);
 }
 
-void Client::run_plugin(const std::string& plugin_name) {
+void Client::run_plugin(const std::string& plugin_name, const std::string& dataset_name) {
 	// TODO make this ispath on the server
-	request("POST", fmt::format("/plugin/run/{}", plugin_name), "Error running plugin", 
+	request("POST", fmt::format("/plugin/run/{}/{}", plugin_name, dataset_name), "Error running plugin", 
 		[](auto &res){
 		    if (res -> status != 200)
 				throw std::invalid_argument("Server Error running plugin");
@@ -143,9 +181,9 @@ void Client::run_plugin(const std::string& plugin_name) {
 	);
 }
 
-void Client::finalize_plugin(const std::string& plugin_name) {
+void Client::finalize_plugin(const std::string& plugin_name, const std::string& dataset_name) {
 	// TODO make this ispath on the server
-	request("POST", fmt::format("/plugin/finalize/{}", plugin_name), "Error finalizing plugin", 
+	request("POST", fmt::format("/plugin/finalize/{}/{}", plugin_name, dataset_name), "Error finalizing plugin", 
 		[](auto &res){
 		    if (res -> status != 200)
 				throw std::invalid_argument("Server Error finalizing plugin");

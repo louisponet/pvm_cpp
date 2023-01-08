@@ -2,19 +2,15 @@
 #include <string>
 
 //Try wether we can't put dataset in a library that this one links against
-Dataset *DATA;
-
 extern "C" {
-	extern int init(void *path) {
-		DATA = new Dataset(*(std::string*) path);
+	extern int init(const Dataset& dataset) {
 		return 0;
 	}
 
-	extern int run() {
-		return DATA->size();
+	extern int run(const Dataset& dataset) {
+		return 0;
 	}
-	extern int finalize() {
-		delete DATA;
+	extern int finalize(const Dataset& dataset) {
 		return 0;
 	}
 }
