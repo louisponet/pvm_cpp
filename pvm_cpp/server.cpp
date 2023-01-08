@@ -11,9 +11,14 @@
 
 using json = nlohmann::json;
 
-Server::Server() : id(0), should_stop(false) {}
+Server::Server() : id(0), should_stop(false) {
+	if (!utils::ispath("servers"))
+		std::filesystem::create_directory(std::filesystem::path("servers"));
+}
 
 Server::Server(int i) : id(i), should_stop(false){
+	if (!utils::ispath("servers"))
+		std::filesystem::create_directory(std::filesystem::path("servers"));
 
     CROW_ROUTE(server, "/alive")([](){ // 
         return true; //

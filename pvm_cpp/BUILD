@@ -3,6 +3,7 @@ cc_library(
     hdrs= glob(["*.hpp"]),
 	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
     copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
+    linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main",
             "@com_github_google_benchmark//:benchmark",
@@ -27,7 +28,7 @@ cc_binary(
         name = "main",
         srcs = ["main.cpp"],
         deps = [":mainlib"],
-        copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
+        copts = ["-std=c++17", "-O0", "-march=native", "-fPIC", "-fopenmp=libomp"],
         linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 		data = ["//:templates"],
 )

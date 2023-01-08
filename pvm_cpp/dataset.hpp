@@ -6,7 +6,7 @@
 #include "pvm_cpp/tick.hpp"
 
 
-extern "C" class Dataset {
+class Dataset {
 	public:
 		std::string ticker;
 		std::vector<Tick> ticks;

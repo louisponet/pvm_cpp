@@ -1,18 +1,6 @@
-#include "crow.h"
-#include "entt/entt.hpp"
-#include <iostream>
-#include <fstream>
 #include <boost/program_options.hpp>
-#include <boost/format.hpp>
 #include "pvm_cpp/client.hpp"
 #include "pvm_cpp/server.hpp"
-#include "pvm_cpp/utils.hpp"
-#include "pvm_cpp/dataset.hpp"
-#include <vector>
-#include <cstdio>
-#include <filesystem>
-#include <dlfcn.h>
-
 
 int main(int argc, char** argv)
 {
@@ -23,9 +11,6 @@ int main(int argc, char** argv)
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, cmd_desc),vm);
 	po::notify(vm);
-	if (!utils::ispath("servers"))
-		std::filesystem::create_directory(std::filesystem::path("servers"));
-
 	if (vm.count("child")) {
 		Server server(vm["child"].as<int>());
 		server.loop();
