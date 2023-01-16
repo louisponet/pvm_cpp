@@ -1,8 +1,8 @@
 cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp"]),
-	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
-    copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
+	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp"],
+    copts = ["-std=c++20", "-O0", "-march=native", "-fPIC"],
     linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main",
@@ -17,8 +17,8 @@ cc_library(
 # cc_binary(
 #     name = "mainlib",
 #     # hdrs= glob(["*.hpp"]),
-# 	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp"],
-#     copts = ["-std=c++17", "-O0", "-march=native", "-fPIC"],
+# 	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", ],
+#     copts = ["-std=c++20", "-O0", "-march=native", "-fPIC"],
 #     linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 #     visibility = ["//visibility:public"],
 # 	deps = [":mainlib_"],
@@ -28,7 +28,7 @@ cc_binary(
         name = "main",
         srcs = ["main.cpp"],
         deps = [":mainlib"],
-        copts = ["-std=c++17", "-O0", "-march=native", "-fPIC", "-fopenmp=libomp"],
+        copts = ["-std=c++20", "-O0", "-march=native", "-fPIC", "-fopenmp=libomp"],
         linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 		data = ["//:templates"],
 )
