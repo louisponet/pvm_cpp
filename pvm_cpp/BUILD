@@ -1,7 +1,7 @@
 cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp"]),
-	srcs = ["server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp"],
+	srcs = ["tick.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp"],
     copts = ["-std=c++20", "-O0", "-march=native", "-fPIC"],
     linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
     visibility = ["//visibility:public"],

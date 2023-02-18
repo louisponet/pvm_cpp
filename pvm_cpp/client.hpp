@@ -3,7 +3,7 @@
 #include "httplib.h"
 #include <filesystem>
 #include <vector>
-
+#include "pvm_cpp/tick.hpp"
 
 class Client {
 	private:
@@ -16,6 +16,8 @@ class Client {
 
 		template<typename Func>
 		auto request(const std::string& method, const std::string& path, const std::string& errmsg, Func&& f) -> std::invoke_result_t<Func, httplib::Result&> ;
+		template<typename Data, typename Func>
+		auto request(const std::string& method, const std::string& path, const Data& data, const std::string& errmsg, Func&& f) -> std::invoke_result_t<Func, httplib::Result&>;
 
 	public:
 		Client();
@@ -27,6 +29,8 @@ class Client {
 
 		void load_data(const std::string& name, const std::string& path);
 		void unload_data(const std::string& name);
+		void add_tick(const std::string& name, const Tick& tick);
+		Tick get_tick(const std::string& name, int id);
 		std::vector<std::string>  list_data();
 		void load_plugin(const std::string& name, const std::string& path);
 		void init_plugin(const std::string& plugin_name, const std::string& dataset_path);

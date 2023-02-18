@@ -79,6 +79,23 @@ auto Client::request(const std::string& method, const std::string& path, const s
 	}
 }
 
+template<typename Data, typename Func>
+auto Client::request(const std::string& method, const std::string& path, const Data& data, const std::string& errmsg, Func&& f) -> std::invoke_result_t<Func, httplib::Result&> {
+	httplib::Request req;
+	req.method = method;
+	req.path = path;
+	json tj = data;
+	req.body = tj.dump();
+	if (!cli)
+		throw std::runtime_error("No connection");
+	auto res = cli -> send(req); 
+	if (res) {
+		return f(res);
+	} else {
+		throw std::runtime_error(errmsg + ": " + httplib::to_string(res.error()));
+	}
+}
+
 void Client::set_port() {
 	auto pp = portpath();
 	std::ifstream file(pp);
@@ -187,6 +204,27 @@ void Client::finalize_plugin(const std::string& plugin_name, const std::string& 
 		[](auto &res){
 		    if (res -> status != 200)
 				throw std::invalid_argument("Server Error finalizing plugin");
+		}
+	);
+}
+
+void Client::add_tick(const std::string& name, const Tick& tick){
+	// TODO make this ispath on the server
+	request("POST", fmt::format("/data/add/{}/", name), tick, "Error adding tick", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server Error adding tick");
+		}
+	);
+}
+Tick Client::get_tick(const std::string& name, int id){
+	// TODO make this ispath on the server
+	return request("GET", fmt::format("/data/read/{}/{}", name, id), "Error reading tick", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server Error reading tick");
+			json tj = json::parse(res -> body);
+		    return tj.get<Tick>();
 		}
 	);
 }

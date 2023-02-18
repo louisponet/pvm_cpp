@@ -9,15 +9,14 @@ Dataset::Dataset(std::string filepath) {
 	std::ifstream f(filepath);
 	auto data = json::parse(f);
 	ticker = data["ticker"];
-	for (auto tick : data["ticks"]) {
-		ticks.push_back(Tick(tick["timestamp"].get<std::time_t>(), 
-		              tick["volume"].get<int>(), 
-		              tick["open"].get<float>(), 
-		              tick["close"].get<float>(),
-		              tick["high"].get<float>(),
-		              tick["low"].get<float>()));
+	for (json tick : data["ticks"]) {
+		ticks.push_back(tick.get<Tick>());
 	}
 }
 int Dataset::size() const {
 	return ticks.size();
+}
+
+void Dataset::add(const Tick& tick){
+	ticks.push_back(tick);
 }

@@ -14,6 +14,8 @@ class Dataset {
 		Dataset(std::string filepath);
 		Dataset();
 
+		void add(const Tick& tick);
+
 		int size() const;
 };
 

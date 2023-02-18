@@ -2,6 +2,7 @@
 #include "pvm_cpp/utils.hpp"
 #include "pvm_cpp/server.hpp"
 #include "pvm_cpp/plugin.hpp"
+#include "pvm_cpp/tick.hpp"
 #include <cstdio>
 #include <string>
 #include <thread>
@@ -32,13 +33,31 @@ Server::Server(int i) : id(i), should_stop(false){
 	    datasets[name] = Dataset(path);
 	    return 200;
     });
+    CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
+    ([this](const crow::request& req, std::string name){
+	    nlohmann::json dat = nlohmann::json::parse(req.body);
+		datasets[name].add(Tick(dat["timestamp"].get<std::time_t>(), 
+		                        dat["volume"].get<int>(), 
+		                        dat["open"].get<float>(), 
+		                        dat["close"].get<float>(),
+		                        dat["high"].get<float>(),
+		                        dat["low"].get<float>()));	
+	    return 200;
+    });
+    CROW_ROUTE(server, "/data/read/<string>/<int>").methods(crow::HTTPMethod::GET)
+    ([this](std::string name, int id){
+	    if (id >= datasets[name].size()) 
+		    return crow::response(500);
+		json j = datasets[name].ticks[id]; 
+	    return crow::response(200, j.dump());
+    });
     CROW_ROUTE(server, "/data/list")
     ([this](){
 	    std::vector<std::string> out;
 		for (auto const& kv: datasets){
 			out.push_back(kv.first);
 		}
-		nlohmann::json to_ret;
+		json to_ret;
 		to_ret["names"] = out;
 	    return to_ret.dump();
     });
