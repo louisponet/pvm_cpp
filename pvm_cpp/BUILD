@@ -11,6 +11,8 @@ cc_library(
             "@gtest//:gtest",
 			"@entt//:entt",
 			"@boost//:program_options",
+			"@boost//:operators",
+			"@boost//:container",
 			"@httplib//:main",
 			"@fmt//:main"]
 )

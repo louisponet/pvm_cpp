@@ -36,12 +36,7 @@ Server::Server(int i) : id(i), should_stop(false){
     CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
     ([this](const crow::request& req, std::string name){
 	    nlohmann::json dat = nlohmann::json::parse(req.body);
-		datasets[name].add(Tick(dat["timestamp"].get<std::time_t>(), 
-		                        dat["volume"].get<int>(), 
-		                        dat["open"].get<float>(), 
-		                        dat["close"].get<float>(),
-		                        dat["high"].get<float>(),
-		                        dat["low"].get<float>()));	
+		datasets[name].add(dat.get<Tick>());	
 	    return 200;
     });
     CROW_ROUTE(server, "/data/read/<string>/<int>").methods(crow::HTTPMethod::GET)
@@ -136,6 +131,7 @@ void Server::loop() {
 
 	server.port(0);
 	// server.loglevel(crow::LogLevel::Debug);
+	server.concurrency(1);
 	auto server_proc = server.run_async();
 
 	while (server.port() == 0) {

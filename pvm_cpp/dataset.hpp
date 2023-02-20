@@ -1,7 +1,7 @@
 #ifndef dataset_hpp_INCLUDED
 #define dataset_hpp_INCLUDED
 
-#include <vector>
+#include "pvm_cpp/stable_vector.hpp"
 #include <string>
 #include "pvm_cpp/tick.hpp"
 
@@ -9,7 +9,7 @@
 class Dataset {
 	public:
 		std::string ticker;
-		std::vector<Tick> ticks;
+		stable_vector<Tick> ticks;
 
 		Dataset(std::string filepath);
 		Dataset();
