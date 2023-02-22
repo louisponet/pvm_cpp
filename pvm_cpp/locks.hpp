@@ -62,10 +62,10 @@ class SeqLock {
 	private:
 		static const std::size_t kFalseSharingRange = 128;
 
-		// Align to prevent false sharing with adjecent data
+		// Align to prevent false sharing with adjacent data
 		alignas(kFalseSharingRange) T value_;
 		std::atomic<std::size_t> seq_;
-		// Padding to prevent false sharing with adjecent data
+		// Padding to prevent false sharing with adjacent data
 		char padding_[kFalseSharingRange - ((sizeof(value_) + sizeof(seq_)) % kFalseSharingRange)];
 		static_assert(((sizeof(value_) + sizeof(seq_) + sizeof(padding_)) % kFalseSharingRange) == 0,
 			"sizeof(SeqLock<T>) should be a multiple of kFalseSharingRange");

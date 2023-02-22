@@ -25,7 +25,7 @@ class SPMCQueue {
 
 		};
 
-		Reader get_reader(){
+		Reader get_reader() {
 			Reader reader;
 			reader.q = this;
 			reader.read_id = write_id;
@@ -38,15 +38,27 @@ class SPMCQueue {
 
 			block.store(tblock);
 		};
-		
+
+
+		SPMCQueue<T, COUNT>& operator =(const SPMCQueue<T, COUNT>& rhs){
+			this -> write_id = rhs.write_id;
+			memcpy(this->blocks, rhs.blocks, COUNT);
+			return *this;
+		}
+		SPMCQueue<T, COUNT>(const SPMCQueue<T, COUNT>& rhs){
+			write_id = rhs.write_id;
+			memcpy(blocks, rhs.blocks, COUNT);
+		}
+		SPMCQueue<T, COUNT>() = default;
+
 
 	private:
 		friend class Reader;
+
 		struct alignas(64) Block {
 			uint64_t id = 0;
 			T value; 
 		};
-
 		SeqLock<Block> blocks[COUNT];
 
 		uint64_t write_id = 0;

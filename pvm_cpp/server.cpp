@@ -30,7 +30,7 @@ Server::Server(int i) : id(i), should_stop(false){
     });
     CROW_ROUTE(server, "/data/load/<string>/<path>").methods(crow::HTTPMethod::POST)
     ([this](std::string name, std::string path){
-	    datasets[name] = Dataset(path);
+	    datasets.insert(std::make_pair(name, Dataset(path)));
 	    return 200;
     });
     CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
