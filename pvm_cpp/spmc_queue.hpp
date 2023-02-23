@@ -12,15 +12,19 @@ class SPMCQueue {
 				SPMCQueue<T, COUNT>* q = nullptr;
 
 				operator bool(){ return q; };
-
-				T read() {
+				
+				bool read(T& out){
 					auto rid = (read_id + 1) % COUNT;
 					Block block = (q -> blocks[rid]).load();
-					while ((int) block.id - (int) read_id <= 0) {
-						block = (q -> blocks[rid]).load();
+					out = block.value;
+
+					if (block.id > read_id) {
+						read_id = block.id;
+						return true;
+					} 
+					else {
+						return false;
 					}
-					read_id = block.id;
-					return block.value;
 				};
 
 		};

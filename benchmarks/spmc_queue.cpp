@@ -1,16 +1,9 @@
 #include "pvm_cpp/spmc_queue.hpp"
 #include <benchmark/benchmark.h>
+#include "pvm_cpp/chrono.hpp"
 #include <ctime>
 #include <x86intrin.h>
-#include <chrono>
 #include <thread>
-
-static inline uint64_t rdtsc()
-{
-    uint64_t rax, rdx;
-    __asm__ __volatile__("rdtsc" : "=a"(rax), "=d"(rdx));
-    return (rdx << 32) + rax;
-}
 
 static inline uint64_t rdtscp()
 {
@@ -35,8 +28,8 @@ static inline uint64_t rdtscp(int& chip, int& core)
 }
 
 double getghz(){
-  using Clock = std::conditional_t<std::chrono::high_resolution_clock::is_steady,
-                                     std::chrono::high_resolution_clock,
+  using Clock = std::conditional_t<hrc::is_steady,
+                                     hrc,
                                      std::chrono::steady_clock>;
 
     int chip, core, chip2, core2;
@@ -45,14 +38,14 @@ double getghz(){
 	cpuid();
     uint64_t rdtsc_start = rdtscp(chip, core);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(500ms);
 
     uint64_t rdtsc_end = rdtscp(chip2, core2);
     cpuid();
 
     auto end = Clock::now();
 
-    auto duration_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    auto duration_ns = std::chrono::duration_cast<ns_t>(end - start);
     uint64_t cycles = rdtsc_end - rdtsc_start;
 
     return (double)cycles / duration_ns.count();
@@ -110,10 +103,12 @@ class QueueFixture: public benchmark::Fixture {
 BENCHMARK_DEFINE_F(QueueFixture, read)(benchmark::State& state){
 	uint64_t cycles = 0;
 	auto r1 = q.get_reader();
+	Msg curmsg;
 	for (auto _ : state){
-		auto tick = r1.read();
-	    auto now = rdtsc();
-		cycles += now - tick.tsc;
+		if (r1.read(curmsg)){
+		    auto now = rdtsc();
+			cycles += now - curmsg.tsc;
+		}
 	}
 	state.counters["Latency (ns)"] = benchmark::Counter((float)cycles/state.iterations() * 1/getghz(), benchmark::Counter::kAvgThreads);
 }

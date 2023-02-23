@@ -24,7 +24,6 @@ int Dataset::size() const {
 }
 
 void Dataset::add(const Tick& tick){
-	std::cout << "writing tick" << std::endl;
 	q.write(tick);
 	ticks.push_back(tick);
 }

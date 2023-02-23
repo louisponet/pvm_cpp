@@ -2,10 +2,14 @@
 #define tick_hpp_INCLUDED
 
 #include <ctime>
+#include <chrono>
 #include "nlohmann/json.hpp"
+
 class Tick {
+	using hrc = std::chrono::high_resolution_clock;
+
 	public:
-		std::time_t timestamp;
+		std::chrono::time_point<hrc> timestamp;
 		int volume;
 		float open;
 		float close;

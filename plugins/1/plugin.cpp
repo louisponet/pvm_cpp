@@ -23,7 +23,7 @@ extern "C" {
 			while (!should_stop) {
 				if(reader.read(curtick)){
 					auto n = hrc::now();
-					std::cout << "plugin 0: " << (n - curtick.timestamp)/1ns << std::endl;
+					std::cout << "plugin 1: " << (n - curtick.timestamp)/1ns << std::endl;
 				}
 			}
 		});

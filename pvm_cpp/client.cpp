@@ -86,7 +86,6 @@ auto Client::request(const std::string& method, const std::string& path, const D
 	req.path = path;
 	json tj = data;
 	req.body = tj.dump();
-	std::cout << req.body << std::endl;
 	if (!cli)
 		throw std::runtime_error("No connection");
 	auto res = cli -> send(req); 

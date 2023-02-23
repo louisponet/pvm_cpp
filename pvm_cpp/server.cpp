@@ -3,10 +3,10 @@
 #include "pvm_cpp/server.hpp"
 #include "pvm_cpp/plugin.hpp"
 #include "pvm_cpp/tick.hpp"
+#include "pvm_cpp/chrono.hpp"
 #include <cstdio>
 #include <string>
 #include <thread>
-#include <chrono>
 #include "nlohmann/json.hpp"
 #include "fmt/core.h"
 
@@ -36,7 +36,8 @@ Server::Server(int i) : id(i), should_stop(false){
     CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
     ([this](const crow::request& req, std::string name){
 	    nlohmann::json dat = nlohmann::json::parse(req.body);
-		datasets[name].add(dat.get<Tick>());	
+	    auto t = dat.get<Tick>();
+		datasets[name].add(t);	
 	    return 200;
     });
     CROW_ROUTE(server, "/data/read/<string>/<int>").methods(crow::HTTPMethod::GET)

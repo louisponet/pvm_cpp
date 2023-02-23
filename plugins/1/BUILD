@@ -1,5 +1,5 @@
 cc_binary(
-    name = "plugin_0",
+    name = "plugin_1",
     srcs= glob(["plugin.cpp"]),
     copts = ["-std=c++20", "-O3", "-march=native", "-fPIC", "-shared", "-fopenmp", "-fomit-frame-pointer"],
 	linkopts = ["-fopenmp","-lpthread", "-lbenchmark", "-lm","-ldl"],

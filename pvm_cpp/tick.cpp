@@ -1,9 +1,9 @@
 #include "pvm_cpp/tick.hpp"
-
+#include "pvm_cpp/chrono.hpp"
+#include <iostream>
 using json = nlohmann::json;
-
 void to_json(json& j, const Tick& t) {
-	j = json{{"timestamp", t.timestamp}, 
+	j = json{{"timestamp", std::chrono::duration_cast<ns_t>(t.timestamp.time_since_epoch()).count()}, 
 	          {"volume", t.volume},
 	          {"open", t.open},
 	          {"close", t.close},
@@ -12,7 +12,7 @@ void to_json(json& j, const Tick& t) {
 }
 
 void from_json(const json& j, Tick& t) {
-	j.at("timestamp").get_to(t.timestamp);
+	t.timestamp=time_point(ns_t(j.at("timestamp").get<uint64_t>()));
 	j.at("volume").get_to(t.volume);
 	j.at("open").get_to(t.open);
 	j.at("close").get_to(t.close);
