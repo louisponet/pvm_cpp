@@ -95,6 +95,7 @@ Server::Server(int i) : id(i), should_stop(false){
     ([this](std::string plugin_name, std::string dataset_name){
 		if (plugins.find(plugin_name) == plugins.end() ||datasets.find(dataset_name) == datasets.end() )
 			return 500;
+		auto ds = datasets[dataset_name];
 		if (plugins[plugin_name].run(datasets[dataset_name])){
 			return 500;
 		} else {
@@ -131,7 +132,7 @@ void Server::loop() {
 
 	server.port(0);
 	// server.loglevel(crow::LogLevel::Debug);
-	server.concurrency(1);
+	server.concurrency(2);
 	auto server_proc = server.run_async();
 
 	while (server.port() == 0) {

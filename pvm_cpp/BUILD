@@ -30,7 +30,7 @@ cc_binary(
         name = "main",
         srcs = ["main.cpp"],
         deps = [":mainlib"],
-        copts = ["-std=c++20", "-O3", "-march=native", "-fPIC", "-fopenmp=libomp", "-DNDEBUG", "-fomit-frame-pointer"],
+        copts = ["-std=c++20", "-march=native", "-fPIC"],
         linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 		data = ["//:templates"],
 )
