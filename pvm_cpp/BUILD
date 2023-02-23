@@ -2,7 +2,7 @@ cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp"]),
 	srcs = ["tick.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp"],
-    copts = ["-std=c++20", "-O3", "-march=native", "-fPIC"],
+    copts = ["-std=c++20", "-O3", "-march=native", "-fPIC", "-fopenmp=libomp", "-DNDEBUG", "-fomit-frame-pointer"],
     linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main",
@@ -30,7 +30,7 @@ cc_binary(
         name = "main",
         srcs = ["main.cpp"],
         deps = [":mainlib"],
-        copts = ["-std=c++20", "-O0", "-march=native", "-fPIC", "-fopenmp=libomp"],
+        copts = ["-std=c++20", "-O3", "-march=native", "-fPIC", "-fopenmp=libomp", "-DNDEBUG", "-fomit-frame-pointer"],
         linkopts = ["-lpthread", "-lbenchmark", "-lm","-ldl"],
 		data = ["//:templates"],
 )

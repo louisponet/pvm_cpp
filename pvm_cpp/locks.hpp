@@ -39,22 +39,29 @@ class SeqLock {
 
 		T load() const noexcept {
 			T copy;
+			load(copy);
+			return copy;
+		}
+		void load(T& copy) const noexcept {
 			std::size_t seq0, seq1;
 			do  {
 				seq0 = seq_.load(std::memory_order_acquire);
 				std::atomic_signal_fence(std::memory_order_acq_rel);
+
 				copy = value_;
+
 				std::atomic_signal_fence(std::memory_order_acq_rel);
 				seq1 = seq_.load(std::memory_order_acquire);
 			} while (seq0 != seq1 || seq0 & 1);
-			return copy;
 		}
 
 		void store(const T &desired) noexcept {
 			std::size_t seq0 = seq_.load(std::memory_order_relaxed);
 			seq_.store(seq0 + 1, std::memory_order_release);
 			std::atomic_signal_fence(std::memory_order_acq_rel);
+
 			value_ = desired;
+
 			std::atomic_signal_fence(std::memory_order_acq_rel);
 			seq_.store(seq0 + 2, std::memory_order_release);
 		}
