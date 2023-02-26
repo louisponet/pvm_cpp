@@ -21,10 +21,9 @@ git_repository(
 )
 
 http_archive(
-    name = "gtest",
-    url = "https://github.com/google/googletest/archive/release-1.10.0.zip",
-    sha256 = "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91",
-    strip_prefix = "googletest-release-1.10.0",
+  name = "com_google_googletest",
+  urls = ["https://github.com/google/googletest/archive/3d787f5a0d58cfc37a0563bb15647a0d8aa2c1bf.zip"],
+  strip_prefix = "googletest-3d787f5a0d58cfc37a0563bb15647a0d8aa2c1bf",
 )
 
 http_archive(

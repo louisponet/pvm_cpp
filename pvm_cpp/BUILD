@@ -8,7 +8,6 @@ cc_library(
 	deps = ["@crow//:main",
             "@com_github_google_benchmark//:benchmark",
             "@nlohmann_json//:json",
-            "@gtest//:gtest",
 			"@entt//:entt",
 			"@boost//:program_options",
 			"@boost//:operators",
