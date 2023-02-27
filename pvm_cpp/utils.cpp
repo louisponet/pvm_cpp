@@ -2,7 +2,6 @@
 #include <glob.h>
 #include <string.h>
 #include <string>
-#include "boost/format.hpp"
 #include <fstream>
 #include <stdexcept>
 #include <thread>
@@ -12,7 +11,7 @@
 namespace utils {
 
 std::filesystem::path portpath(const int child_id) {
-	return std::filesystem::path(str(boost::format("servers/%1%/port") % child_id));
+	return std::filesystem::path(fmt::format("servers/{}/port", child_id));
 }
 
 bool ispath(const std::string& p_string){
