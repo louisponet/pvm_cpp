@@ -49,7 +49,8 @@ http_archive(
 http_archive(
   name = "fmt",
   url = "https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip",
-  build_file = "fmt.BUILD"
+  build_file = "fmt.BUILD",
+  strip_prefix = "fmt-9.1.0",
 )
 
 # Boost
