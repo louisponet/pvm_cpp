@@ -1,9 +1,11 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-local_repository(
-	name = "com_github_google_benchmark",
-	path = "/home/ponet/Software/benchmark"
+http_archive(
+  name = "com_google_benchmark",
+  urls = ["https://github.com/google/benchmark/archive/d572f4777349d43653b21d6c2fc63020ab326db2.zip"],
+  strip_prefix = "benchmark-d572f4777349d43653b21d6c2fc63020ab326db2",
 )
+
 http_archive(
     name = "com_grail_bazel_compdb",
     strip_prefix = "bazel-compilation-database-0.5.2",
@@ -66,3 +68,25 @@ http_archive(
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
+git_repository(
+  remote = "https://github.com/louisponet/bazel-toolchain",
+  name = "com_grail_bazel_toolchain",
+  branch = "master"
+)
+
+load("@com_grail_bazel_toolchain//toolchain:deps.bzl", "bazel_toolchain_dependencies")
+
+bazel_toolchain_dependencies()
+
+load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
+
+llvm_toolchain(
+    name = "llvm_toolchain",
+    llvm_version="15.0.6",
+    cxx_standard={"":"c++20"},
+    stdlib={"":"stdc++"},
+)
+
+load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
+
+llvm_register_toolchains()

@@ -28,12 +28,6 @@ int main(int argc, char** argv)
 		c.load_plugin("test_plugin", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
 		c.init_plugin("test_plugin", "test_data");
 		c.run_plugin("test_plugin", "test_data");
-		c.load_plugin("test_plugin2", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/1/libplugin_1.so");
-		c.init_plugin("test_plugin2", "test_data");
-		c.run_plugin("test_plugin2", "test_data");
-		c.load_plugin("test_plugin3", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/2/libplugin_2.so");
-		c.init_plugin("test_plugin3", "test_data");
-		c.run_plugin("test_plugin3", "test_data");
 		c.add_tick("test_data", Tick{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
 
 		c.add_tick("test_data", Tick{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 

@@ -1,8 +1,7 @@
 cc_binary(
     name = "plugin_0",
     srcs= glob(["plugin.cpp"]),
-    copts = ["-std=c++20", "-O3", "-march=native", "-fPIC", "-shared", "-fopenmp", "-fomit-frame-pointer"],
-	linkopts = ["-fopenmp","-lpthread", "-lbenchmark", "-lm","-ldl"],
+    copts = ["-fPIC"],
     visibility = ["//visibility:public"],
 	deps = ["//pvm_cpp:mainlib"],
     linkshared=1,
