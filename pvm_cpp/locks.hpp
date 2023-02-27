@@ -6,24 +6,24 @@
 class Spinlock
 {
 private:
-    std::atomic_flag atomic_flag = ATOMIC_FLAG_INIT;
+    std::atomic<bool> atomic_flag = ATOMIC_FLAG_INIT;
 
 public:
     void lock()
     {
         for (;;)
         {
-            if (!atomic_flag.test_and_set(std::memory_order_acquire))
+            if (!atomic_flag.exchange(true, std::memory_order_acquire))
             {
                 break;
             }
-            while (atomic_flag.test(std::memory_order_relaxed))
+            while (atomic_flag.load(std::memory_order_relaxed))
                 ;
         }
     }
     void unlock()
     {
-        atomic_flag.clear(std::memory_order_release);
+        atomic_flag.store(false,std::memory_order_release);
     }
 };
 
