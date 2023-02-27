@@ -10,6 +10,7 @@ cc_library(
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
 alwayslink=True,
-deps=["@boost//:algorithm"]
+deps=["@boost//:algorithm",
+      "@boost//:asio"]
 )
 
