@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 	} else {
 		Client c(1);
 		c.connect();
-		c.load_data("test_data", "/home/ponet/.julia/environments/TradingDEV/data.json");
+		c.load_data("test_data");
 
 		c.load_plugin("test_plugin", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
 		c.init_plugin("test_plugin", "test_data");

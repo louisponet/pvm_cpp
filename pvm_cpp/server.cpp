@@ -33,6 +33,11 @@ Server::Server(int i) : id(i), should_stop(false){
 	    datasets.insert(std::make_pair(name, Dataset(path)));
 	    return 200;
     });
+    CROW_ROUTE(server, "/data/load/<string>").methods(crow::HTTPMethod::POST)
+    ([this](std::string name){
+	    datasets.insert(std::make_pair(name, Dataset()));
+	    return 200;
+    });
     CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
     ([this](const crow::request& req, std::string name){
 	    nlohmann::json dat = nlohmann::json::parse(req.body);

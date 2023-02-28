@@ -28,6 +28,7 @@ class Client {
 		void kill();
 
 		void load_data(const std::string& name, const std::string& path);
+		void load_data(const std::string& name);
 		void unload_data(const std::string& name);
 		void add_tick(const std::string& name, const Tick& tick);
 		Tick get_tick(const std::string& name, int id);

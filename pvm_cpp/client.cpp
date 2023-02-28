@@ -141,6 +141,16 @@ void Client::load_data(const std::string& name, const std::string& path) {
 	);
 }
 
+void Client::load_data(const std::string& name) {
+	// TODO make this ispath on the server
+	request("POST", fmt::format("/data/load/{}", name), "Error loading data", 
+		[](auto &res){
+		    if (res -> status != 200)
+				throw std::invalid_argument("Server error loading data");
+		}
+	);
+}
+
 void Client::unload_data(const std::string& name) {
 	// TODO make this ispath on the server
 	request("POST", fmt::format("/data/unload/{}", name), "Error unloading data", 
