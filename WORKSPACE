@@ -86,6 +86,7 @@ llvm_toolchain(
     llvm_version="15.0.6",
     cxx_standard={"":"c++20"},
     stdlib={"":"stdc++"},
+	link_flags={"":["-ldl"]}
 )
 
 load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
