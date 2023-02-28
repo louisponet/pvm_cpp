@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 		c.connect();
 		c.load_data("test_data");
 
-		c.load_plugin("test_plugin", "/home/ponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
+		c.load_plugin("test_plugin", "/home/lponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
 		c.init_plugin("test_plugin", "test_data");
 		c.run_plugin("test_plugin", "test_data");
 		c.add_tick("test_data", Tick{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 

@@ -1,5 +1,5 @@
 #include "pvm_cpp/spmc_queue.hpp"
-#include <benchmark/benchmark.h>
+#include "benchmark/benchmark.h"
 #include "pvm_cpp/chrono.hpp"
 #include <ctime>
 #include <x86intrin.h>
