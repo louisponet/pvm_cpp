@@ -7,6 +7,7 @@ cc_library(
             "@nlohmann_json//:json",
 			"@entt//:entt",
 			"@boost//:program_options",
+			"@boost//:dll",
 			"@boost//:operators",
 			"@boost//:container",
 			"@httplib//:main",

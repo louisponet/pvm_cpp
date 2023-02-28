@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "nlohmann/json.hpp"
 #include "fmt/core.h"
+#include "boost/dll/runtime_symbol_info.hpp"
 
 Client::Client() : id(0), port(0), cli(nullptr){}
 Client::Client(int i) : id(i), cli(nullptr) {}
@@ -40,7 +41,7 @@ void Client::connect(){
 		}
 	}
 
-	system(fmt::format("/home/ponet/Software/pvm_cpp/bazel-bin/pvm_cpp/main -c{} -p{}&", id,"/home/ponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so").c_str());
+	system(fmt::format("{} -c{} &", boost::dll::program_location().c_str(), id).c_str());
 
 	int tries = 0;
 	while (!utils::ispath(pp) && tries < 1000) {
