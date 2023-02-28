@@ -27,10 +27,10 @@ static inline uint64_t rdtscp(int& chip, int& core)
     return (rdx << 32) + rax;
 }
 
+using Clock = std::conditional_t<hrc::is_steady,
+                                 hrc,
+                                 std::chrono::steady_clock>;
 double getghz(){
-  using Clock = std::conditional_t<hrc::is_steady,
-                                     hrc,
-                                     std::chrono::steady_clock>;
 
     int chip, core, chip2, core2;
 
@@ -53,8 +53,8 @@ double getghz(){
 
 struct Msg
 {
-  uint64_t tsc;
-  uint64_t i[1];
+  hrc::time_point tsc;
+  uint64_t rdtsc;
 };
 
 bool cpupin(int cpuid) {
@@ -80,15 +80,12 @@ class QueueFixture: public benchmark::Fixture {
 			if (st.thread_index() == 0) {
 				done = false;
 				t = std::thread([&](){
-					int cnt = 0;
 					cpupin(4);
 					while (!this->done){
-						cnt++;
-						q.write(Msg{rdtsc(), {0}});
+						q.write(Msg{hrc::now(), rdtsc()});
 					    auto expire = rdtsc() + st.range(0);
 					    while (rdtsc() < expire) continue;
 					}
-					st.counters["Dropped"] = cnt - st.iterations();
 				});
 			}
 		}
@@ -102,15 +99,22 @@ class QueueFixture: public benchmark::Fixture {
 
 BENCHMARK_DEFINE_F(QueueFixture, read)(benchmark::State& state){
 	uint64_t cycles = 0;
+	uint64_t totread = 0; 
+	std::chrono::nanoseconds dur(0); 
 	auto r1 = q.get_reader();
 	Msg curmsg;
 	for (auto _ : state){
 		if (r1.read(curmsg)){
-		    auto now = rdtsc();
-			cycles += now - curmsg.tsc;
+		    auto now_cycles = rdtsc();
+		    auto now_clock = hrc::now();
+			cycles += now_cycles - curmsg.rdtsc;
+			dur += now_clock - curmsg.tsc; 
+			totread++;
 		}
 	}
-	state.counters["Latency (ns)"] = benchmark::Counter((float)cycles/state.iterations() * 1/getghz(), benchmark::Counter::kAvgThreads);
+	state.counters["avg cycles"] = benchmark::Counter((double)cycles/totread, benchmark::Counter::kAvgThreads);
+	state.counters["Latency from cycles (ns)"] = benchmark::Counter((double)cycles/totread * 1/getghz(), benchmark::Counter::kAvgThreads);
+	state.counters["Latency from timer  (ns)"] = benchmark::Counter((double)dur.count()/totread, benchmark::Counter::kAvgThreads);
 }
 
 BENCHMARK_REGISTER_F(QueueFixture,read) -> Range(5, 5<<10) -> Threads(1) -> Threads(2) -> Threads(3);

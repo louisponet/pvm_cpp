@@ -13,11 +13,6 @@ Dataset::Dataset(std::string filepath) {
 		ticks.push_back(tick.get<Tick>());
 	}
 }
-// Dataset& Dataset::operator=(Dataset other){
-// 	std::swap(ticker, other.ticker);
-// 	std::swap(ticks, other.ticks);
-	// std::swap(q, other.q);
-// };
 
 int Dataset::size() const {
 	return ticks.size();
