@@ -17,6 +17,29 @@ Change `src/main.cpp` according to your setup.
 
 To run the benchmark of the `spmc_queue` performance you can run `bazel run -c opt //benchmarks:spmc_queue`.
 
+# Internals
+
+## SPMCQueue
+
+This is essentiall a ring buffer with a single producer and multiple consumers of the data.
+It uses `SeqLocks` so the single writer is not impacted by the amount of readers.
+Inspiration was taken from [David Gross' talk](https://www.youtube.com/watch?v=8uAW5FQtcvE).
+
+## DataSet
+
+A `DataSet` holds tick values for one ticker, with an `SPMCQueue` for newly incoming ticks, and a `vector` storing all ticks.
+It can be loaded and stored by a `Server`, and is used as the input argument to functions defined by plugins.
+
+## Server
+
+A `Server` handles restAPI requests to load `DataSets`, add new `Ticks` to existing `DataSets` and load and execute `Plugin` code.
+
+## Plugins
+
+`Plugins` are compiled .so library files that hold some functions through which the `Server` can interact with it.
+Notably `init`, `run` and `finalize`. A `Server` can load a new plugin and start executing it on existing or newly available `Ticks` in a given `DataSet`.
+This allows for modularity and data locality, i.e. we ship around the .so files which are small rather than the enormous amounts of data.
+
 
 
 
