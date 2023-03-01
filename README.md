@@ -6,7 +6,7 @@ The structure of the system is a network of machines / processes which can be co
 The main observation to be explored is that it is easier/cheaper/faster to pass code around rather than data, i.e. that the different pvm instances can load their local data and receive the code to be ran on that data.
 
 The design is shown in the graph below.
-![](design.svg)
+![](design.png)
 
 # Build
 `bazel` is used as the build framework.
