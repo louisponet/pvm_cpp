@@ -6,13 +6,22 @@ http_archive(
   strip_prefix = "benchmark-d572f4777349d43653b21d6c2fc63020ab326db2",
 )
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
 http_archive(
-    name = "com_grail_bazel_compdb",
-    strip_prefix = "bazel-compilation-database-0.5.2",
-    urls = ["https://github.com/grailbio/bazel-compilation-database/archive/0.5.2.tar.gz"],
+    name = "hedron_compile_commands",
+
+    # Replace the commit hash in both places (below) with the latest, rather than using the stale one here.
+    # Even better, set up Renovate and let it do the work for you (see "Suggestion: Updates" in the README).
+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/ed994039a951b736091776d677f324b3903ef939.tar.gz",
+    strip_prefix = "bazel-compile-commands-extractor-ed994039a951b736091776d677f324b3903ef939",
+    # When you first run this tool, it'll recommend a sha256 hash to put here with a message like: "DEBUG: Rule 'hedron_compile_commands' indicated that a canonical reproducible form can be obtained by modifying arguments sha256 = ..."
 )
-load("@com_grail_bazel_compdb//:deps.bzl", "bazel_compdb_deps")
-bazel_compdb_deps()
+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
+hedron_compile_commands_setup()
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
@@ -31,7 +40,7 @@ http_archive(
 http_archive(
 	name = "crow",
 	url = "https://github.com/CrowCpp/Crow/releases/download/v1.0%2B5/crow-v1.0+5.tar.gz",
-	build_file = "crow.BUILD",
+	build_file = "@//bazel/crow:BUILD",
 )
 
 git_repository(
@@ -43,13 +52,13 @@ git_repository(
 http_archive(
   name = "httplib",
   url = "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.11.3.tar.gz",
-  build_file = "httplib.BUILD",
+  build_file = "@//bazel/httplib:BUILD",
 )
 
 http_archive(
   name = "fmt",
   url = "https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip",
-  build_file = "fmt.BUILD",
+  build_file = "@//bazel/fmt:BUILD",
   strip_prefix = "fmt-9.1.0",
 )
 
