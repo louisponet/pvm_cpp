@@ -83,6 +83,7 @@ gcc_copts = [
     "-Wmissing-field-initializers",
     "-Wwrite-strings",
     "-Wshadow",
+	"-fpermissive",
     "-fno-common",
 ]
 gcc_copts_c11 = [
@@ -93,7 +94,7 @@ gcc_copts_c11 = [
     "-Wstrict-prototypes",
 ]
 gcc_copts_cxx = [
-    "-std=c++17",
+    "-std=c++14",
     "-Wmissing-declarations",
 ]
 
