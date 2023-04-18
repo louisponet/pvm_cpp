@@ -10,7 +10,7 @@ httplib::Headers headers(const std::string& alpaca_key_id, const std::string& al
 }
 
 AlpacaBroker::AlpacaBroker(const std::string alpaca_key_id_, const std::string alpaca_secret_){
-	httplib::SSLClient client("paper-api.alpaca.markets");
+	httplib::Client client("paper-api.alpaca.markets");
 
 	auto resp = client.Get("/v2/account", headers(alpaca_key_id_, alpaca_secret_));
 	if (!resp) {

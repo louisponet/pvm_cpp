@@ -50,13 +50,6 @@ git_repository(
 )
 
 http_archive(
-    name = "com_github_google_boringssl",
-    strip_prefix = "boringssl-master-with-bazel",
-    urls = ["https://github.com/google/boringssl/archive/master-with-bazel.tar.gz"],
-	build_file = "@//bazel/boringssl:BUILD",
-)
-
-http_archive(
   name = "httplib",
   url = "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.11.3.tar.gz",
   build_file = "@//bazel/httplib:BUILD",

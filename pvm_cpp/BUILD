@@ -10,7 +10,6 @@ cc_library(
 			"@boost//:dll",
 			"@boost//:operators",
 			"@boost//:container",
-            "@com_github_google_boringssl//:ssl",
 			"@httplib//:main",
 			"@fmt//:main"]
 )
