@@ -89,6 +89,7 @@ gcc_copts_c11 = [
     "-std=c++14",
     "-Wmissing-prototypes",
     "-Wold-style-definition",
+	"-fpermissive",
     "-Wstrict-prototypes",
 ]
 gcc_copts_cxx = [
