@@ -50,6 +50,13 @@ git_repository(
 )
 
 http_archive(
+    name = "com_github_google_boringssl",
+    strip_prefix = "boringssl-master-with-bazel",
+    urls = ["https://github.com/google/boringssl/archive/master-with-bazel.tar.gz"],
+	build_file = "@//bazel/boringssl:BUILD",
+)
+
+http_archive(
   name = "httplib",
   url = "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.11.3.tar.gz",
   build_file = "@//bazel/httplib:BUILD",
@@ -94,6 +101,8 @@ llvm_toolchain(
     name = "llvm_toolchain",
     llvm_version="15.0.6",
     cxx_standard={"":"c++20"},
+	cxx_flags={"":["-Wno-error", "-std=c++20"]},
+	compile_flags={"":["-Wno-error"]},
     stdlib={"":"stdc++"},
 	link_flags={"":["-ldl"]}
 )

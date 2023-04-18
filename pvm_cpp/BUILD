@@ -1,7 +1,7 @@
 cc_library(
     name = "mainlib",
-    hdrs= glob(["*.hpp"]),
-	srcs = ["tick.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp"],
+    hdrs= glob(["*.hpp", "brokers/*.hpp"]),
+	srcs = ["tick.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp", "brokers/alpaca.cpp"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main",
             "@nlohmann_json//:json",
@@ -10,6 +10,7 @@ cc_library(
 			"@boost//:dll",
 			"@boost//:operators",
 			"@boost//:container",
+            "@com_github_google_boringssl//:ssl",
 			"@httplib//:main",
 			"@fmt//:main"]
 )
