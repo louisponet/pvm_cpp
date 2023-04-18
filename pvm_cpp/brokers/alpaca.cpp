@@ -1,6 +1,8 @@
 #include <iostream>
 #include "pvm_cpp/brokers/alpaca.hpp"
 #include "fmt/core.h"
+#include "nlohmann/json.hpp"
+#include <chrono>
 
 httplib::Headers headers(const std::string& alpaca_key_id, const std::string& alpaca_secret){
   return {
@@ -56,5 +58,21 @@ std::vector<Bar> AlpacaBroker::get_bars(const std::string& ticker,
 		throw "Couldn't retrieve bars";
 	}
 
-	std::cout<<resp->body << std::endl;
+	auto data = nlohmann::json::parse(resp->body);
+
+	auto datbars = data["bars"];
+	uint16_t nbars = data["bars"].size();
+
+	std::vector<Bar> bars(nbars);
+
+	for (int i = 0; i < nbars; i++){
+		auto curbar = datbars[i];
+		bars[i] = Bar(std::chrono::parse("%4y-%2m-%2dT%2h:%2m:%2sZ", curbar["t"]),
+					  curbar["o"], 
+	                  curbar["h"], 
+	                  curbar["l"],
+	                  curbar["c"],  
+	                  curbar["v"]);
+	}
+	return bars;
 }
