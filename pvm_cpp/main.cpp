@@ -5,6 +5,8 @@ int main(int argc, char** argv)
 	std::string id = std::getenv("ALPACA_KEY_ID");
 	std::string secret = std::getenv("ALPACA_SECRET");
 	AlpacaBroker broker(id, secret);
+
+	broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z", "2023-04-06T00:00:00.000Z", "1Min");
 	return 0;
 }
 // #include <boost/program_options.hpp>
