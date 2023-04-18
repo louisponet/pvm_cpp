@@ -2,7 +2,7 @@
 #include "pvm_cpp/utils.hpp"
 #include "pvm_cpp/server.hpp"
 #include "pvm_cpp/plugin.hpp"
-#include "pvm_cpp/tick.hpp"
+#include "pvm_cpp/bar.hpp"
 #include "pvm_cpp/chrono.hpp"
 #include <cstdio>
 #include <string>
@@ -41,7 +41,7 @@ Server::Server(int i) : id(i), should_stop(false){
     CROW_ROUTE(server, "/data/add/<string>/").methods(crow::HTTPMethod::POST)
     ([this](const crow::request& req, std::string name){
 	    nlohmann::json dat = nlohmann::json::parse(req.body);
-	    auto t = dat.get<Tick>();
+	    auto t = dat.get<Bar>();
 		datasets[name].add(t);	
 	    return 200;
     });
@@ -49,7 +49,7 @@ Server::Server(int i) : id(i), should_stop(false){
     ([this](std::string name, int id){
 	    if (id >= datasets[name].size()) 
 		    return crow::response(500);
-		json j = datasets[name].ticks[id]; 
+		json j = datasets[name].bars[id]; 
 	    return crow::response(200, j.dump());
     });
     CROW_ROUTE(server, "/data/list")

@@ -1,5 +1,4 @@
 #include "pvm_cpp/brokers/alpaca.hpp"
-#include "httplib.h"
 
 httplib::Headers headers(const std::string& alpaca_key_id, const std::string& alpaca_secret){
   return {
@@ -12,7 +11,7 @@ httplib::Headers headers(const std::string& alpaca_key_id, const std::string& al
 AlpacaBroker::AlpacaBroker(const std::string alpaca_key_id_, const std::string alpaca_secret_){
 	httplib::Client client("paper-api.alpaca.markets");
 
-	auto resp = client.Get("/v2/account", headers(alpaca_key_id_, alpaca_secret_));
+	auto resp = client.Get("/v2/account", ::headers(alpaca_key_id_, alpaca_secret_));
 	if (!resp) {
 		throw "Error couldn't connect to alpaca";
 	}
@@ -20,3 +19,11 @@ AlpacaBroker::AlpacaBroker(const std::string alpaca_key_id_, const std::string a
 	alpaca_key_id = alpaca_key_id_;
 	alpaca_secret = alpaca_secret_;
 };
+
+httplib::Headers AlpacaBroker::headers() {
+	return ::headers(alpaca_key_id, alpaca_secret);
+};
+
+std::vector<Bar> AlpacaBroker::get_bars(){
+
+}

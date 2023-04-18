@@ -3,7 +3,7 @@
 
 #include "pvm_cpp/stable_vector.hpp"
 #include <string>
-#include "pvm_cpp/tick.hpp"
+#include "pvm_cpp/bar.hpp"
 #include "pvm_cpp/spmc_queue.hpp"
 
 
@@ -15,11 +15,11 @@ class Dataset {
 		// Dataset& operator=(Dataset other);
 
 		std::string ticker;
-		stable_vector<Tick> ticks;
-		void add(const Tick& tick);
+		stable_vector<Bar> bars;
+		void add(const Bar& bar);
 
 		int size() const;
-		SPMCQueue<Tick, 1024> q; 
+		SPMCQueue<Bar, 1024> q; 
 
 };
 

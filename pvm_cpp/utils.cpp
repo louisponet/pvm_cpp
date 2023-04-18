@@ -55,4 +55,15 @@ std::vector<std::string> glob(const std::string& pattern) {
     return filenames;
 }
 
+std::string join(const std::vector<std::string>& strings, const std::string& delim){
+	std::string out = strings[0];
+
+	for (int i = 1; i < strings.size(); i++){
+		out += delim;
+		out += strings[i];
+	}
+	return out;
+
+}
+
 }

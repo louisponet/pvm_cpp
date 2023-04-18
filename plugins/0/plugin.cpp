@@ -18,12 +18,12 @@ extern "C" {
 	extern int run(Dataset& dataset) {
 		// Why can't I capture the reader here ??
 		t = std::thread([&dataset](){
-			SPMCQueue<Tick, 1024>::Reader reader = dataset.q.get_reader(); 
-			Tick curtick;
+			SPMCQueue<Bar, 1024>::Reader reader = dataset.q.get_reader(); 
+			Bar curbar;
 			while (!should_stop) {
-				if(reader.read(curtick)){
+				if(reader.read(curbar)){
 					auto n = hrc::now();
-					std::cout << "plugin 0: " << (n - curtick.timestamp)/1ns << std::endl;
+					std::cout << "plugin 0: " << (n - curbar.timestamp)/1ns << std::endl;
 				}
 			}
 		});

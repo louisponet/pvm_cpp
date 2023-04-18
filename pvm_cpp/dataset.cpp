@@ -9,16 +9,16 @@ Dataset::Dataset(std::string filepath) {
 	std::ifstream f(filepath);
 	auto data = json::parse(f);
 	ticker = data["ticker"];
-	for (json tick : data["ticks"]) {
-		ticks.push_back(tick.get<Tick>());
+	for (json bar : data["bars"]) {
+		bars.push_back(bar.get<Bar>());
 	}
 }
 
 int Dataset::size() const {
-	return ticks.size();
+	return bars.size();
 }
 
-void Dataset::add(const Tick& tick){
-	q.write(tick);
-	ticks.push_back(tick);
+void Dataset::add(const Bar& bar){
+	q.write(bar);
+	bars.push_back(bar);
 }

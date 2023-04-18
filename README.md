@@ -32,19 +32,10 @@ It can be loaded and stored by a `Server`, and is used as the input argument to 
 
 ## Server
 
-A `Server` handles restAPI requests to load `DataSets`, add new `Ticks` to existing `DataSets` and load and execute `Plugin` code.
+A `Server` handles restAPI requests to load `DataSets`, add new `Bars` to existing `DataSets` and load and execute `Plugin` code.
 
 ## Plugins
 
 `Plugins` are compiled .so library files that hold some functions through which the `Server` can interact with it.
-Notably `init`, `run` and `finalize`. A `Server` can load a new plugin and start executing it on existing or newly available `Ticks` in a given `DataSet`.
+Notably `init`, `run` and `finalize`. A `Server` can load a new plugin and start executing it on existing or newly available `Bars` in a given `DataSet`.
 This allows for modularity and data locality, i.e. we ship around the .so files which are small rather than the enormous amounts of data.
-
-
-
-
-
-
-
-
-

@@ -3,7 +3,7 @@
 #include "httplib.h"
 #include <filesystem>
 #include <vector>
-#include "pvm_cpp/tick.hpp"
+#include "pvm_cpp/bar.hpp"
 
 class Client {
 	private:
@@ -30,8 +30,8 @@ class Client {
 		void load_data(const std::string& name, const std::string& path);
 		void load_data(const std::string& name);
 		void unload_data(const std::string& name);
-		void add_tick(const std::string& name, const Tick& tick);
-		Tick get_tick(const std::string& name, int id);
+		void add_bar(const std::string& name, const Bar& bar);
+		Bar get_bar(const std::string& name, int id);
 		std::vector<std::string>  list_data();
 		void load_plugin(const std::string& name, const std::string& path);
 		void init_plugin(const std::string& plugin_name, const std::string& dataset_path);

@@ -219,23 +219,23 @@ void Client::finalize_plugin(const std::string& plugin_name, const std::string& 
 	);
 }
 
-void Client::add_tick(const std::string& name, const Tick& tick){
+void Client::add_bar(const std::string& name, const Bar& bar){
 	// TODO make this ispath on the server
-	request("POST", fmt::format("/data/add/{}/", name), tick, "Error adding tick", 
+	request("POST", fmt::format("/data/add/{}/", name), bar, "Error adding bar", 
 		[](auto &res){
 		    if (res -> status != 200)
-				throw std::invalid_argument("Server Error adding tick");
+				throw std::invalid_argument("Server Error adding bar");
 		}
 	);
 }
-Tick Client::get_tick(const std::string& name, int id){
+Bar Client::get_bar(const std::string& name, int id){
 	// TODO make this ispath on the server
-	return request("GET", fmt::format("/data/read/{}/{}", name, id), "Error reading tick", 
+	return request("GET", fmt::format("/data/read/{}/{}", name, id), "Error reading bar", 
 		[](auto &res){
 		    if (res -> status != 200)
-				throw std::invalid_argument("Server Error reading tick");
+				throw std::invalid_argument("Server Error reading bar");
 			json tj = json::parse(res -> body);
-		    return tj.get<Tick>();
+		    return tj.get<Bar>();
 		}
 	);
 }
