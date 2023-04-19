@@ -69,7 +69,7 @@ std::vector<Bar> AlpacaBroker::get_bars(const std::string& ticker,
         auto curbar = datbars[i];
         std::istringstream in(curbar["t"].get<std::string>());
         std::chrono::time_point<std::chrono::high_resolution_clock> tp;
-        in >> date::parse("%4y-%2m-%2dT%2h:%2m:%2sZ", tp);
+        in >> date::parse("%Y-%m-%dT%T%Z", tp);
         bars[i] = Bar{tp,
                       curbar["o"].get<float>(),
                       curbar["h"].get<float>(),
