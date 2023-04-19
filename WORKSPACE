@@ -62,6 +62,14 @@ http_archive(
   strip_prefix = "fmt-9.1.0",
 )
 
+http_archive(
+  name = "date",
+  url = "https://github.com/HowardHinnant/date/archive/refs/tags/v3.0.1.zip",
+  sha256 = "f4300b96f7a304d4ef9bf6e0fa3ded72159f7f2d0f605bdde3e030a0dba7cf9f",
+  build_file = "@//bazel/date:BUILD",
+  strip_prefix = "date-3.0.1"
+)
+
 # Boost
 # Famous C++ library that has given rise to many new additions to the C++ Standard Library
 # Makes @boost available for use: For example, add `@boost//:algorithm` to your deps.

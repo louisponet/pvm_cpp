@@ -1,13 +1,13 @@
-#include "pvm_cpp/brokers/alpaca.hpp"
 #include <iostream>
-int main(int argc, char** argv)
-{
-	std::string id = std::getenv("ALPACA_KEY_ID");
-	std::string secret = std::getenv("ALPACA_SECRET");
-	AlpacaBroker broker(id, secret);
+#include "pvm_cpp/brokers/alpaca.hpp"
+int main(int argc, char** argv) {
+    std::string id = std::getenv("ALPACA_KEY_ID");
+    std::string secret = std::getenv("ALPACA_SECRET");
+    AlpacaBroker broker(id, secret);
 
-	broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z", "2023-04-06T00:00:00.000Z", "1Min");
-	return 0;
+    broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
+                    "2023-04-06T00:00:00.000Z", "1Min");
+    return 0;
 }
 // #include <boost/program_options.hpp>
 // #include "pvm_cpp/client.hpp"
@@ -38,12 +38,12 @@ int main(int argc, char** argv)
 // 		c.load_plugin("test_plugin", "/home/lponet/Software/pvm_cpp/bazel-bin/plugins/0/libplugin_0.so");
 // 		c.init_plugin("test_plugin", "test_data");
 // 		c.run_plugin("test_plugin", "test_data");
-// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
+// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30});
 
-// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
-// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
-// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
-// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30}); 
+// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30});
+// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30});
+// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30});
+// 		c.add_bar("test_data", Bar{hrc::now(), 10, 203.0, 112.0, 123.9, 12.30});
 // 		sleep(2);
 // 		c.finalize_plugin("test_plugin", "test_data");
 // 		c.kill();

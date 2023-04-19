@@ -8,12 +8,9 @@
 // 		Task();
 // 		Task
 
-
 // 	private:
 // 		std::jthread t;
 
 // };
 
-
-
-#endif // task_hpp_INCLUDED
+#endif  // task_hpp_INCLUDED

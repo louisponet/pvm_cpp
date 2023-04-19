@@ -5,25 +5,23 @@
 #include "dataset.hpp"
 
 class Plugin {
-	public:
-		Plugin();
-		Plugin(const std::string &path);
-		~Plugin();
+   public:
+    Plugin();
+    Plugin(const std::string& path);
+    ~Plugin();
 
-		bool loaded;
-		void load();
-		int init(const Dataset&);
-		int run(const Dataset& dataset);
-		int finalize(const Dataset&);
+    bool loaded;
+    void load();
+    int init(const Dataset&);
+    int run(const Dataset& dataset);
+    int finalize(const Dataset&);
 
-	private:
-		std::string path;
-		int (*init_)(const Dataset&);
-		int (*run_)(const Dataset&);
-		int (*finalize_)(const Dataset&);
-		void *handle;
-
+   private:
+    std::string path;
+    int (*init_)(const Dataset&);
+    int (*run_)(const Dataset&);
+    int (*finalize_)(const Dataset&);
+    void* handle;
 };
 
-
-#endif // plugin_hpp_INCLUDED
+#endif  // plugin_hpp_INCLUDED

@@ -11,7 +11,8 @@ cc_library(
 			"@boost//:operators",
 			"@boost//:container",
 			"@httplib//:main",
-			"@fmt//:main"],
+			"@fmt//:main",
+            "@date//:main"],
 	defines = [
 	        "CPPHTTPLIB_OPENSSL_SUPPORT",
 	    ]
