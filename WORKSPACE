@@ -56,6 +56,12 @@ http_archive(
 )
 
 http_archive(
+  name = "websocketpp",
+  url = "https://github.com/zaphoyd/websocketpp/archive/refs/tags/0.8.2.zip",
+  build_file = "@//bazel/websocketpp:BUILD",
+)
+
+http_archive(
   name = "fmt",
   url = "https://github.com/fmtlib/fmt/releases/download/9.1.0/fmt-9.1.0.zip",
   build_file = "@//bazel/fmt:BUILD",

@@ -2,16 +2,46 @@
 #include "pvm_cpp/brokers/alpaca.hpp"
 #include "date/date.h"
 #include <chrono>
+#include <vector>
+
+struct Test{
+	int i;
+	Test() : i(0){};
+	Test(int i) : i(i){std::cout << " constructed\n";};
+	Test(const Test& i) : i(i.i){std::cout << " copy constructed\n";};
+	Test(Test&& o) : i(std::move(o.i)){std::cout << "move constructed\n";};
+	Test& operator =(const Test& other){
+		i = other.i;
+		std::cout << " copy assinged\n";
+		return *this;
+	}
+	Test& operator =(Test&& other){
+		i = std::move(other.i);
+		std::cout << " move assinged\n";
+		return *this;
+	}
+
+};
 
 int main(int argc, char** argv) {
-    std::string id = std::getenv("ALPACA_KEY_ID");
-    std::string secret = std::getenv("ALPACA_SECRET");
-    AlpacaBroker broker(id, secret);
+    // std::string id = std::getenv("ALPACA_KEY_ID");
+    // std::string secret = std::getenv("ALPACA_SECRET");
+    // AlpacaBroker broker(id, secret);
 
-    std::cout << date::format("%D %T %Z", date::floor<std::chrono::milliseconds>(broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
-                    "2023-04-06T00:00:00.000Z", "1Min")[0].timestamp)) << std::endl;
-    std::cout << broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
-                    "2023-04-06T00:00:00.000Z", "1Min")[0].volume << std::endl;
+    // std::cout << date::format("%D %T %Z", date::floor<std::chrono::milliseconds>(broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
+    //                 "2023-04-06T00:00:00.000Z", "1Min")[0].timestamp)) << std::endl;
+    // std::cout << broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
+    //                 "2023-04-06T00:00:00.000Z", "1Min")[0].volume << std::endl;
+
+	std::vector<Test> tests(5);
+
+	for (int i = 0; i < 5; i++){
+		tests.emplace(tests.begin()+i, Test{i});
+	}
+
+	for (int i = 0; i < 5; i++){
+		tests[i] = Test(i);
+	}
 
     return 0;
 }

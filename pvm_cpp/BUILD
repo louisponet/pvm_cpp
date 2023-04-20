@@ -12,7 +12,8 @@ cc_library(
 			"@boost//:container",
 			"@httplib//:main",
 			"@fmt//:main",
-            "@date//:main"],
+            "@date//:main",
+			"@websocketpp//:main"],
 	defines = [
 	        "CPPHTTPLIB_OPENSSL_SUPPORT",
 	    ]

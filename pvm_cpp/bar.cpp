@@ -1,7 +1,9 @@
 #include "pvm_cpp/bar.hpp"
 #include <iostream>
 #include "pvm_cpp/chrono.hpp"
+
 using json = nlohmann::json;
+
 void to_json(json& j, const Bar& t) {
     j = json{{"timestamp",
               std::chrono::duration_cast<ns_t>(t.timestamp.time_since_epoch())
