@@ -1,10 +1,10 @@
 #ifndef websocket_hpp_INCLUDED
 #define websocket_hpp_INCLUDED
 
-#include "websocketpp/client.hpp"
-#include "websocketpp/common/memory.hpp"
-#include "websocketpp/common/thread.hpp"
-#include "websocketpp/config/asio_no_tls_client.hpp"
+#include <websocketpp/client.hpp>
+#include <websocketpp/common/memory.hpp>
+#include <websocketpp/common/thread.hpp>
+#include <websocketpp/config/asio_client.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -13,11 +13,11 @@
 #include <string>
 #include <vector>
 
-typedef websocketpp::client<websocketpp::config::asio_client> client;
+typedef websocketpp::client<websocketpp::config::asio_tls_client> WebsocketClient;
 
 class ConnectionMetadata {
    public:
-    typedef websocketpp::lib::shared_ptr<ConnectionMetadata> ptr;
+    typedef websocketpp::lib::shared_ptr<ConnectionMetadata> WebsocketMetadataPointer;
 
     ConnectionMetadata(int id, websocketpp::connection_hdl handle,
                        std::string uri)
@@ -27,9 +27,11 @@ class ConnectionMetadata {
           uri(uri),
           server("N/A") {}
 
-    void on_open(client* c, websocketpp::connection_hdl handle);
+    void on_open(WebsocketClient* c, websocketpp::connection_hdl handle);
 
-    void on_fail(client* c, websocketpp::connection_hdl handle);
+    void on_fail(WebsocketClient* c, websocketpp::connection_hdl handle);
+
+    void on_message(websocketpp::connection_hdl handle, WebsocketClient::message_ptr msg);
 
     websocketpp::connection_hdl get_handle() { return handle; }
     std::string get_status() { return status; }
@@ -62,15 +64,15 @@ class WebsocketEndpoint {
 
     ~WebsocketEndpoint();
 
-    ConnectionMetadata::ptr get_metadata(int id) const;
+    ConnectionMetadata::WebsocketMetadataPointer get_metadata(int id) const;
 
    private:
-    typedef std::map<int, ConnectionMetadata::ptr> connection_map;
+    typedef std::map<int, ConnectionMetadata::WebsocketMetadataPointer> ConnectionMap;
 
-    client endpoint;
+    WebsocketClient endpoint;
     websocketpp::lib::shared_ptr<websocketpp::lib::thread> thread;
 
-    connection_map connections;
+    ConnectionMap connections;
     int next_id;
 };
 

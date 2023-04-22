@@ -1,47 +1,34 @@
 #include <iostream>
 #include "pvm_cpp/brokers/alpaca.hpp"
-#include "date/date.h"
+#include "pvm_cpp/websocket.hpp"
+#include <date/date.h>
 #include <chrono>
 #include <vector>
-
-struct Test{
-	int i;
-	Test() : i(0){};
-	Test(int i) : i(i){std::cout << " constructed\n";};
-	Test(const Test& i) : i(i.i){std::cout << " copy constructed\n";};
-	Test(Test&& o) : i(std::move(o.i)){std::cout << "move constructed\n";};
-	Test& operator =(const Test& other){
-		i = other.i;
-		std::cout << " copy assinged\n";
-		return *this;
-	}
-	Test& operator =(Test&& other){
-		i = std::move(other.i);
-		std::cout << " move assinged\n";
-		return *this;
-	}
-
-};
+#include <nlohmann/json.hpp>
 
 int main(int argc, char** argv) {
-    // std::string id = std::getenv("ALPACA_KEY_ID");
-    // std::string secret = std::getenv("ALPACA_SECRET");
-    // AlpacaBroker broker(id, secret);
+	WebsocketEndpoint endpoint;
+	int id = endpoint.connect("wss://paper-api.alpaca.markets/stream");
+    std::string alpaca_id = std::getenv("ALPACA_KEY_ID");
+    std::string alpaca_secret = std::getenv("ALPACA_SECRET");
 
-    // std::cout << date::format("%D %T %Z", date::floor<std::chrono::milliseconds>(broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
-    //                 "2023-04-06T00:00:00.000Z", "1Min")[0].timestamp)) << std::endl;
-    // std::cout << broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
-    //                 "2023-04-06T00:00:00.000Z", "1Min")[0].volume << std::endl;
 
-	std::vector<Test> tests(5);
+	nlohmann::json body;
+	body["action"] = "auth";
+	body["key"] = alpaca_id;
+	body["secret"] = alpaca_secret;
+	endpoint.send(id, body.dump());	
+	int close_code = websocketpp::close::status::normal;
 
-	for (int i = 0; i < 5; i++){
-		tests.emplace(tests.begin()+i, Test{i});
-	}
+	endpoint.close(id, close_code);
 
-	for (int i = 0; i < 5; i++){
-		tests[i] = Test(i);
-	}
+	std::cout << endpoint.get_metadata(id); 
+    AlpacaBroker broker(alpaca_id, alpaca_secret);
+
+    std::cout << date::format("%D %T %Z", date::floor<std::chrono::milliseconds>(broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
+                    "2023-04-06T00:00:00.000Z", "1Min")[0].timestamp)) << std::endl;
+    std::cout << broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",
+                    "2023-04-06T00:00:00.000Z", "1Min")[0].volume << std::endl;
 
     return 0;
 }

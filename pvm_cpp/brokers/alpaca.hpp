@@ -29,6 +29,6 @@ class AlpacaBroker {
     std::string alpaca_key_id;
     std::string alpaca_secret;
 
-    std::atomic<int> cur_requests = 0;
+    std::atomic<int> cur_requests;
     const int max_requests = 200;  // per minute
 };

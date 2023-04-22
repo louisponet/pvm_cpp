@@ -1,11 +1,13 @@
 cc_library(
     name = "main",
     hdrs = glob([
-        "websocketpp-0.8.2/*.hpp",
+        "websocketpp/*.hpp",
+		"websocketpp/*/*.hpp",
+		"websocketpp/*/*/*.hpp",
+		"websocketpp/*/*/*/*.hpp",
     ]),
-	includes = ["websocketpp-0.8.2"],
-	copts = ["-Iexternal/websocketpp/websocketpp-0.8.2"],
-    linkopts = ["-pthread"],
+	includes = [""],
+	copts = ["-std=c++11"],
+    # linkopts = ["-pthread", "-lboost_system"],
     visibility = ["//visibility:public"],
-alwayslink=True,
 )

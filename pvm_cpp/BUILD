@@ -1,7 +1,7 @@
 cc_library(
     name = "mainlib",
     hdrs= glob(["*.hpp", "brokers/*.hpp"]),
-	srcs = ["bar.cpp", "server.cpp", "client.cpp", "utils.cpp", "dataset.cpp", "plugin.cpp", "task.cpp", "brokers/alpaca.cpp"],
+	srcs = ["bar.cpp","client.cpp", "dataset.cpp", "plugin.cpp", "server.cpp", "task.cpp", "utils.cpp", "websocket.cpp","brokers/alpaca.cpp"],
     visibility = ["//visibility:public"],
 	deps = ["@crow//:main",
             "@nlohmann_json//:json",
@@ -10,13 +10,16 @@ cc_library(
 			"@boost//:dll",
 			"@boost//:operators",
 			"@boost//:container",
+			"@boost//:asio_ssl",
 			"@httplib//:main",
 			"@fmt//:main",
             "@date//:main",
 			"@websocketpp//:main"],
 	defines = [
 	        "CPPHTTPLIB_OPENSSL_SUPPORT",
-	    ]
+	    ],
+	copts = ["-std=c++17"],
+    linkopts = ["-ldl","-lstdc++"]
 )
 
 cc_binary(
