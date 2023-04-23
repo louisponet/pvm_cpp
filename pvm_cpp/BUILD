@@ -11,15 +11,18 @@ cc_library(
 			"@boost//:operators",
 			"@boost//:container",
 			"@boost//:asio_ssl",
+			"@boost//:system",
+			"@boost//:filesystem",
 			"@httplib//:main",
 			"@fmt//:main",
             "@date//:main",
 			"@websocketpp//:main"],
 	defines = [
 	        "CPPHTTPLIB_OPENSSL_SUPPORT",
+			
 	    ],
-	copts = ["-std=c++17"],
-    linkopts = ["-ldl","-lstdc++"]
+	copts = ["-std=c++20"],
+    linkopts = ["-ldl"]
 )
 
 cc_binary(

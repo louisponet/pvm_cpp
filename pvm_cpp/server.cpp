@@ -1,53 +1,63 @@
 #define CROW_ENABLE_DEBUG
-#include "pvm_cpp/server.hpp"
 #include <cstdio>
 #include <string>
 #include <thread>
-#include "fmt/core.h"
-#include "nlohmann/json.hpp"
+
+#include <fmt/core.h>
+#include <nlohmann/json.hpp>
+
 #include "pvm_cpp/bar.hpp"
 #include "pvm_cpp/chrono.hpp"
 #include "pvm_cpp/plugin.hpp"
+#include "pvm_cpp/server.hpp"
 #include "pvm_cpp/utils.hpp"
 
 using json = nlohmann::json;
 
+using namespace boost::filesystem;
+
+static const path SERVERPATH("servers");
+
 Server::Server() : id(0), should_stop(false) {
-    if (!utils::ispath("servers"))
-        std::filesystem::create_directory(std::filesystem::path("servers"));
+    if (!utils::ispath(SERVERPATH))
+        create_directory(SERVERPATH);
 }
 
 Server::Server(int i) : id(i), should_stop(false) {
-    if (!utils::ispath("servers"))
-        std::filesystem::create_directory(std::filesystem::path("servers"));
+
+    if (!utils::ispath(SERVERPATH))
+        create_directory(SERVERPATH);
 
     CROW_ROUTE(server, "/alive")
     ([]() {           //
         return true;  //
     });
+
     CROW_ROUTE(server, "/kill").methods(crow::HTTPMethod::POST)([this]() {  //
         should_stop = true;                                                 //
         return true;
     });
+
     CROW_ROUTE(server, "/data/load/<string>/<path>")
-        .methods(crow::HTTPMethod::POST)(
-            [this](std::string name, std::string path) {
-                datasets.insert(std::make_pair(name, Dataset(path)));
-                return 200;
-            });
+        .methods(crow::HTTPMethod::POST)([this](std::string name, std::string path) {
+            datasets.insert(std::make_pair(name, Dataset(path)));
+            return 200;
+        });
+
     CROW_ROUTE(server, "/data/load/<string>")
         .methods(crow::HTTPMethod::POST)([this](std::string name) {
             datasets.insert(std::make_pair(name, Dataset()));
             return 200;
         });
+
     CROW_ROUTE(server, "/data/add/<string>/")
-        .methods(crow::HTTPMethod::POST)(
-            [this](const crow::request& req, std::string name) {
-                nlohmann::json dat = nlohmann::json::parse(req.body);
-                auto t = dat.get<Bar>();
-                datasets[name].add(t);
-                return 200;
-            });
+        .methods(crow::HTTPMethod::POST)([this](const crow::request& req, std::string name) {
+            nlohmann::json dat = nlohmann::json::parse(req.body);
+            auto t             = dat.get<Bar>();
+            datasets[name].add(t);
+            return 200;
+        });
+
     CROW_ROUTE(server, "/data/read/<string>/<int>")
         .methods(crow::HTTPMethod::GET)([this](std::string name, int id) {
             if (id >= datasets[name].size())
@@ -55,6 +65,7 @@ Server::Server(int i) : id(i), should_stop(false) {
             json j = datasets[name].bars[id];
             return crow::response(200, j.dump());
         });
+
     CROW_ROUTE(server, "/data/list")
     ([this]() {
         std::vector<std::string> out;
@@ -67,21 +78,20 @@ Server::Server(int i) : id(i), should_stop(false) {
     });
 
     CROW_ROUTE(server, "/plugin/load/<string>/<path>")
-        .methods(crow::HTTPMethod::POST)(
-            [this](std::string name, std::string path) {
-                plugins[name] = Plugin(path);
-                int tries = 0;
-                while (!plugins[name].loaded || tries == 1000) {
-                    utils::thread_ms_sleep(50);
-                    tries++;
-                }
-                if (tries == 1000) {
-                    plugins.erase(name);
-                    CROW_LOG_WARNING << "Cannot load plugin: " << name;
-                    return 500;
-                } else
-                    return 200;
-            });
+        .methods(crow::HTTPMethod::POST)([this](std::string name, std::string path) {
+            plugins[name] = Plugin(path);
+            int tries     = 0;
+            while (!plugins[name].loaded || tries == 1000) {
+                utils::thread_ms_sleep(50);
+                tries++;
+            }
+            if (tries == 1000) {
+                plugins.erase(name);
+                CROW_LOG_WARNING << "Cannot load plugin: " << name;
+                return 500;
+            } else
+                return 200;
+        });
 
     CROW_ROUTE(server, "/plugin/unload/<string>")
         .methods(crow::HTTPMethod::POST)([this](std::string name) {
@@ -92,43 +102,42 @@ Server::Server(int i) : id(i), should_stop(false) {
         });
 
     CROW_ROUTE(server, "/plugin/init/<string>/<string>")
-        .methods(crow::HTTPMethod::POST)(
-            [this](std::string plugin_name, std::string dataset_name) {
-                if (plugins.find(plugin_name) == plugins.end() ||
-                    datasets.find(dataset_name) == datasets.end())
-                    return 500;
-                if (plugins[plugin_name].init(datasets[dataset_name])) {
-                    return 500;
-                } else {
-                    return 200;
-                }
-            });
-    CROW_ROUTE(server, "/plugin/run/<string>/<string>")
-        .methods(crow::HTTPMethod::POST)(
-            [this](std::string plugin_name, std::string dataset_name) {
-                if (plugins.find(plugin_name) == plugins.end() ||
-                    datasets.find(dataset_name) == datasets.end())
-                    return 500;
-                auto ds = datasets[dataset_name];
-                if (plugins[plugin_name].run(datasets[dataset_name])) {
-                    return 500;
-                } else {
-                    return 200;
-                }
-            });
-    CROW_ROUTE(server, "/plugin/finalize/<string>/<string>")
-        .methods(crow::HTTPMethod::POST)(
-            [this](std::string plugin_name, std::string dataset_name) {
-                if (plugins.find(plugin_name) == plugins.end() ||
-                    datasets.find(dataset_name) == datasets.end())
-                    return 500;
+        .methods(crow::HTTPMethod::POST)([this](std::string plugin_name, std::string dataset_name) {
+            if (plugins.find(plugin_name) == plugins.end() ||
+                datasets.find(dataset_name) == datasets.end())
+                return 500;
+            if (plugins[plugin_name].init(datasets[dataset_name])) {
+                return 500;
+            } else {
+                return 200;
+            }
+        });
 
-                if (plugins[plugin_name].finalize(datasets[dataset_name])) {
-                    return 500;
-                } else {
-                    return 200;
-                }
-            });
+    CROW_ROUTE(server, "/plugin/run/<string>/<string>")
+        .methods(crow::HTTPMethod::POST)([this](std::string plugin_name, std::string dataset_name) {
+            if (plugins.find(plugin_name) == plugins.end() ||
+                datasets.find(dataset_name) == datasets.end())
+                return 500;
+            auto ds = datasets[dataset_name];
+            if (plugins[plugin_name].run(datasets[dataset_name])) {
+                return 500;
+            } else {
+                return 200;
+            }
+        });
+
+    CROW_ROUTE(server, "/plugin/finalize/<string>/<string>")
+        .methods(crow::HTTPMethod::POST)([this](std::string plugin_name, std::string dataset_name) {
+            if (plugins.find(plugin_name) == plugins.end() ||
+                datasets.find(dataset_name) == datasets.end())
+                return 500;
+
+            if (plugins[plugin_name].finalize(datasets[dataset_name])) {
+                return 500;
+            } else {
+                return 200;
+            }
+        });
 }
 Server::~Server() {
     if (utils::ispath(portpath()))
@@ -138,8 +147,8 @@ Server::~Server() {
 
 void Server::loop() {
     auto dir = storage_dir();
-    if (!std::filesystem::exists(dir))
-        std::filesystem::create_directory(dir);
+    if (!boost::filesystem::exists(dir))
+        boost::filesystem::create_directory(dir);
 
     auto pp = portpath();
     if (utils::ispath(pp))
@@ -174,10 +183,10 @@ void Server::loop() {
 int Server::port() {
     return server.port();
 }
-std::filesystem::path Server::portpath() {
+boost::filesystem::path Server::portpath() {
     return utils::portpath(id);
 }
 
-std::filesystem::path Server::storage_dir() {
-    return std::filesystem::path(fmt::format("servers/{}", id));
+boost::filesystem::path Server::storage_dir() {
+    return path(fmt::format("servers/{}", id));
 }

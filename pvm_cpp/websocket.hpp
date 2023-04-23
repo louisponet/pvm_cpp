@@ -31,11 +31,15 @@ class ConnectionMetadata {
 
     void on_fail(WebsocketClient* c, websocketpp::connection_hdl handle);
 
+
     void on_message(websocketpp::connection_hdl handle, WebsocketClient::message_ptr msg);
 
     websocketpp::connection_hdl get_handle() { return handle; }
     std::string get_status() { return status; }
     int get_id() { return id; }
+
+    const std::string& last_message() const;
+    int n_messages() const;
 
     void record_sent_message(std::string message);
 
@@ -54,10 +58,12 @@ class ConnectionMetadata {
 
 class WebsocketEndpoint {
    public:
+    typedef std::shared_ptr<boost::asio::ssl::context> SSLContextPointer;
     WebsocketEndpoint();
 
     int connect(std::string const& uri);
 
+    static SSLContextPointer on_tls_init();
     void send(int id, std::string message);
 
     void close(int id, websocketpp::close::status::value code);

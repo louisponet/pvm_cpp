@@ -20,14 +20,18 @@ void ConnectionMetadata::on_fail(WebsocketClient* c, websocketpp::connection_hdl
 
 void ConnectionMetadata::on_message(websocketpp::connection_hdl handle,
                                     WebsocketClient::message_ptr msg) {
-    if (msg->get_opcode() == websocketpp::frame::opcode::text) {
 
-        messages.push_back(msg->get_payload());
+	//TODO: it seems alpaca always sends binary instead of text for their opcodes
+	//
+    messages.push_back(msg->get_payload());
+}
 
-    } else {
+const std::string& ConnectionMetadata::last_message() const{
+	return *(messages.end());
+}
 
-        messages.push_back(websocketpp::utility::to_hex(msg->get_payload()));
-    }
+int ConnectionMetadata::n_messages() const{
+	return messages.size();
 }
 
 void ConnectionMetadata::record_sent_message(std::string message) {
@@ -56,6 +60,7 @@ WebsocketEndpoint::WebsocketEndpoint() : next_id(0) {
     endpoint.clear_error_channels(websocketpp::log::elevel::all);
 
     endpoint.init_asio();
+    endpoint.set_tls_init_handler(websocketpp::lib::bind(&WebsocketEndpoint::on_tls_init));
     endpoint.start_perpetual();
 
     thread.reset(new websocketpp::lib::thread(&WebsocketClient::run, &endpoint));
@@ -96,6 +101,8 @@ int WebsocketEndpoint::connect(std::string const& uri) {
     int new_id = next_id++;
     ConnectionMetadata::WebsocketMetadataPointer metadata_ptr(
         new ConnectionMetadata(new_id, con->get_handle(), uri));
+
+    
     connections[new_id] = metadata_ptr;
 
     con->set_open_handler(websocketpp::lib::bind(&ConnectionMetadata::on_open, metadata_ptr,
@@ -121,6 +128,13 @@ void WebsocketEndpoint::send(int id, std::string message) {
         std::cout << "> No connection found with id " << id << std::endl;
         return;
     }
+
+	std::string status = it->second->get_status();
+
+	if (status != "Open") {
+        std::cout << "> Error sending message, Connection status : " << status << std::endl;
+        return;
+	}
 
     endpoint.send(it->second->get_handle(), message, websocketpp::frame::opcode::text, err);
     if (err) {
@@ -156,3 +170,20 @@ ConnectionMetadata::WebsocketMetadataPointer WebsocketEndpoint::get_metadata(int
         return it->second;
     }
 }
+
+WebsocketEndpoint::SSLContextPointer WebsocketEndpoint::on_tls_init() {
+    // establishes a SSL connection
+    SSLContextPointer ctx =
+        std::make_shared<boost::asio::ssl::context>(boost::asio::ssl::context::sslv23);
+
+    try {
+        ctx->set_options(boost::asio::ssl::context::default_workarounds |
+                         boost::asio::ssl::context::no_sslv2 | 
+                         boost::asio::ssl::context::no_sslv3 |
+                         boost::asio::ssl::context::single_dh_use);
+    } catch (std::exception& e) {
+        std::cout << "Error in context pointer: " << e.what() << std::endl;
+    }
+    return ctx;
+}
+

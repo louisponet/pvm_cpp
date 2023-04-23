@@ -1,5 +1,5 @@
 #pragma once
-#include <filesystem>
+#include <boost/filesystem.hpp>
 #include <map>
 #include "crow.h"
 #include "pvm_cpp/dataset.hpp"
@@ -13,8 +13,8 @@ class Server {
     std::unordered_map<std::string, Dataset> datasets;
 
     int port();
-    std::filesystem::path portpath();
-    std::filesystem::path storage_dir();
+    boost::filesystem::path portpath();
+    boost::filesystem::path storage_dir();
 
    public:
     std::unordered_map<std::string, Plugin> plugins;

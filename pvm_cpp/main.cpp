@@ -1,12 +1,14 @@
 #include <iostream>
 #include "pvm_cpp/brokers/alpaca.hpp"
 #include "pvm_cpp/websocket.hpp"
+#include "pvm_cpp/utils.hpp"
 #include <date/date.h>
 #include <chrono>
 #include <vector>
 #include <nlohmann/json.hpp>
 
 int main(int argc, char** argv) {
+
 	WebsocketEndpoint endpoint;
 	int id = endpoint.connect("wss://paper-api.alpaca.markets/stream");
     std::string alpaca_id = std::getenv("ALPACA_KEY_ID");
@@ -17,12 +19,28 @@ int main(int argc, char** argv) {
 	body["action"] = "auth";
 	body["key"] = alpaca_id;
 	body["secret"] = alpaca_secret;
-	endpoint.send(id, body.dump());	
+
+	ConnectionMetadata::WebsocketMetadataPointer connection = endpoint.get_metadata(id); 
+	while (connection -> get_status() != "Open") {
+		utils::thread_ms_sleep(100);
+	}
+
+	std::string message = body.dump();
+	endpoint.send(id, message);	
+
+	while (connection -> n_messages() == 1){ 
+		utils::thread_ms_sleep(100);
+	}
+
 	int close_code = websocketpp::close::status::normal;
 
 	endpoint.close(id, close_code);
 
-	std::cout << endpoint.get_metadata(id); 
+	std::cout << *connection; 
+
+
+
+
     AlpacaBroker broker(alpaca_id, alpaca_secret);
 
     std::cout << date::format("%D %T %Z", date::floor<std::chrono::milliseconds>(broker.get_bars("MSFT", "2023-04-05T00:00:00.000Z",

@@ -7,7 +7,9 @@ cc_library(
 		"websocketpp/*/*/*/*.hpp",
     ]),
 	includes = [""],
-	copts = ["-std=c++11"],
+	# copts = ["-std=c++11"],
     # linkopts = ["-pthread", "-lboost_system"],
+	# deps = ["@boost//:asio",
+ #            "@boost//:system"],
     visibility = ["//visibility:public"],
 )
